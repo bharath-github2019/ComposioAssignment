@@ -1,0 +1,1361 @@
+[
+  {
+    "id": "github",
+    "name": "GitHub",
+    "domain": "github.com",
+    "category": "Developer tools",
+    "checked": "2026-10-28",
+    "mode": "verified",
+    "headline": "Register in minutes with no review. The surprise comes later: each customer organization has to approve your app before it can see their org's data.",
+    "startUrl": "https://github.com/settings/developers",
+    "paths": [
+      {
+        "name": "OAuth app, personal repos",
+        "tier": "self-serve",
+        "hands": [
+          5,
+          15
+        ],
+        "wait": [
+          0,
+          0
+        ],
+        "note": "No GitHub review at any point."
+      },
+      {
+        "name": "Access to a customer's organization",
+        "tier": "customer-approval",
+        "hands": [
+          5,
+          15
+        ],
+        "wait": [
+          0,
+          4320
+        ],
+        "waitUnknown": true,
+        "note": "Wait depends on each customer's org owner approving the app."
+      }
+    ],
+    "prereqs": [
+      {
+        "t": "A GitHub account, or admin rights on the GitHub organization that should own the app.",
+        "ev": "docs",
+        "src": [
+          "gh-create"
+        ]
+      },
+      {
+        "t": "A public homepage URL for your product.",
+        "ev": "docs",
+        "src": [
+          "gh-create"
+        ]
+      },
+      {
+        "t": "The exact callback URL from your integration platform (in Composio, it is shown on the auth config).",
+        "ev": "docs",
+        "src": [
+          "composio-wl"
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "t": "Open Developer settings",
+        "d": "Sign in, then go to Settings, Developer settings, OAuth Apps. Register under your organization rather than a personal account so the app survives staff changes.",
+        "who": "you",
+        "ev": "tested",
+        "src": [
+          "gh-create",
+          "probe-gh"
+        ]
+      },
+      {
+        "t": "Fill in the app details",
+        "d": "Application name and homepage are shown to users on the consent screen. Only use information you consider public; avoid internal URLs.",
+        "who": "both",
+        "ev": "docs",
+        "src": [
+          "gh-create"
+        ]
+      },
+      {
+        "t": "Set the one callback URL",
+        "d": "An OAuth app accepts a single authorization callback URL. Create separate apps for development and production instead of swapping the URL.",
+        "who": "both",
+        "ev": "docs",
+        "src": [
+          "gh-create",
+          "weweb-gh"
+        ]
+      },
+      {
+        "t": "Generate a client secret",
+        "d": "After registering, generate a client secret and copy it straight into your secrets manager or integration platform. It is shown once.",
+        "who": "you",
+        "ev": "model",
+        "src": []
+      },
+      {
+        "t": "Connect it to your integration",
+        "d": "Paste the client ID and secret into your auth config. Only new connections use your app; existing users keep refreshing through the previous credentials until they reconnect.",
+        "who": "you",
+        "ev": "docs",
+        "src": [
+          "composio-wl-2"
+        ]
+      }
+    ],
+    "nuances": [
+      {
+        "t": "Organizations must approve OAuth apps",
+        "d": "OAuth apps need organization approval by default and cannot be approved per repository. A user in a restricted org can sign in, but org data stays hidden until an owner approves. Tell customers how to request access in your onboarding.",
+        "impact": "high",
+        "ev": "docs",
+        "src": [
+          "gh-limit"
+        ]
+      },
+      {
+        "t": "OAuth app or GitHub App",
+        "d": "GitHub Apps allow up to 10 callback URLs and finer-grained permissions. If your platform supports GitHub Apps, compare before committing; this guide covers the OAuth app most integration platforms ask for.",
+        "impact": "medium",
+        "ev": "docs",
+        "src": [
+          "gh-callback"
+        ]
+      },
+      {
+        "t": "Scopes are coarse",
+        "d": "Classic OAuth scopes such as repo grant broad access to private repositories. Users and security reviewers may push back; request the narrowest scope that works.",
+        "impact": "medium",
+        "ev": "model",
+        "src": []
+      }
+    ],
+    "blockers": [
+      {
+        "if": "A user connects but sees none of their organization's repositories",
+        "then": "The org has OAuth app access restrictions. The user requests access from the authorization screen and an org owner approves it in the org's settings."
+      },
+      {
+        "if": "You need different callback URLs per environment",
+        "then": "Register one OAuth app per environment, or move to a GitHub App, which supports multiple callback URLs."
+      }
+    ],
+    "agent": {
+      "can": [
+        "Draft the app name and description",
+        "Work out the callback URL from your integration platform",
+        "Open the exact registration page",
+        "Check the finished config against this guide"
+      ],
+      "you": [
+        "Sign in to GitHub (agents cannot pass the login wall)",
+        "Click Register and generate the secret",
+        "Store the secret safely",
+        "Ask customer org owners to approve the app"
+      ]
+    },
+    "tested": [
+      {
+        "what": "Requested github.com/settings/applications/new and /settings/developers without an account",
+        "result": "Both return 302 to the GitHub sign-in page. The registration form cannot be reached unauthenticated, so field-level steps rely on GitHub's docs.",
+        "date": "2026-10-28"
+      }
+    ],
+    "uncertain": [
+      "How long customer org approval takes varies by customer; GitHub imposes no wait of its own.",
+      "Whether your integration platform supports GitHub Apps instead of OAuth apps."
+    ],
+    "sources": [
+      {
+        "id": "gh-create",
+        "title": "GitHub Docs: Creating an OAuth app",
+        "url": "https://docs.github.com/en/enterprise-server@3.1/apps/building-oauth-apps/creating-an-oauth-app",
+        "kind": "official"
+      },
+      {
+        "id": "gh-limit",
+        "title": "GitHub Docs: Limiting OAuth app and GitHub App access requests",
+        "url": "https://docs.github.com/en/organizations/managing-programmatic-access-to-your-organization/limiting-oauth-app-and-github-app-access-requests-and-installations",
+        "kind": "official"
+      },
+      {
+        "id": "gh-callback",
+        "title": "GitHub Docs: About the user authorization callback URL",
+        "url": "https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/about-the-user-authorization-callback-url",
+        "kind": "official"
+      },
+      {
+        "id": "weweb-gh",
+        "title": "WeWeb: GitHub provider setup (one callback URL per app)",
+        "url": "https://docs.weweb.io/database-and-apis/auth/providers/github.html",
+        "kind": "third-party"
+      },
+      {
+        "id": "composio-wl",
+        "title": "Composio Docs: White-labeling authentication",
+        "url": "https://docs.composio.dev/docs/guides/white-labeling-authentication",
+        "kind": "official"
+      },
+      {
+        "id": "composio-wl-2",
+        "title": "Composio Docs: Switching to your own OAuth app",
+        "url": "https://docs-2gqx4xowi.preview.composio.dev/docs/white-labeling-authentication",
+        "kind": "official"
+      },
+      {
+        "id": "probe-gh",
+        "title": "Agent probe: unauthenticated request to the registration page",
+        "url": "https://github.com/settings/applications/new",
+        "kind": "probe"
+      }
+    ]
+  },
+  {
+    "id": "slack",
+    "name": "Slack",
+    "domain": "slack.com",
+    "category": "Communication",
+    "checked": "2026-10-28",
+    "mode": "verified",
+    "headline": "Creating the app takes under an hour. Selling it to other companies is the hard part: Slack's terms route commercial distribution through Marketplace review, and unlisted apps get a 1 request per minute limit on reading messages.",
+    "startUrl": "https://api.slack.com/apps",
+    "paths": [
+      {
+        "name": "Internal app for your own workspace",
+        "tier": "self-serve",
+        "hands": [
+          20,
+          60
+        ],
+        "wait": [
+          0,
+          0
+        ],
+        "note": "Internal customer-built apps keep standard rate limits."
+      },
+      {
+        "name": "Unlisted app installed by customers",
+        "tier": "restricted",
+        "hands": [
+          30,
+          90
+        ],
+        "wait": [
+          0,
+          0
+        ],
+        "note": "Works immediately, but message-history reads are throttled and the terms point commercial apps to the Marketplace."
+      },
+      {
+        "name": "Slack Marketplace listing",
+        "tier": "review-required",
+        "hands": [
+          480,
+          1440
+        ],
+        "wait": [
+          10080,
+          60480
+        ],
+        "waitUnknown": true,
+        "note": "Needs 10 active workspace installs before you can submit. Slack publishes no review SLA."
+      }
+    ],
+    "prereqs": [
+      {
+        "t": "A Slack workspace where you can install apps, for testing.",
+        "ev": "model",
+        "src": []
+      },
+      {
+        "t": "An HTTPS redirect URL (your integration platform's callback).",
+        "ev": "model",
+        "src": []
+      },
+      {
+        "t": "For the Marketplace: at least 10 installations on active workspaces before you submit.",
+        "ev": "docs",
+        "src": [
+          "slack-changelog"
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "t": "Create the app from a manifest",
+        "d": "At api.slack.com/apps choose Create New App, then From a manifest. Paste the manifest below, which sets the name, redirect URL and scopes in one go.",
+        "who": "both",
+        "ev": "model",
+        "src": []
+      },
+      {
+        "t": "Check OAuth and permissions",
+        "d": "Confirm the redirect URL and scopes under OAuth & Permissions. Ask only for scopes you use; reviewers check this.",
+        "who": "you",
+        "ev": "model",
+        "src": []
+      },
+      {
+        "t": "Install to your own workspace and test",
+        "d": "Install, complete a real OAuth connection through your integration, and call one API method.",
+        "who": "you",
+        "ev": "model",
+        "src": []
+      },
+      {
+        "t": "Activate public distribution",
+        "d": "Under Manage Distribution, work through Slack's checklist and activate public distribution so other workspaces can install the app.",
+        "who": "you",
+        "ev": "model",
+        "src": []
+      },
+      {
+        "t": "Decide on the Marketplace",
+        "d": "If you charge customers and read message history, plan the Marketplace submission early. You need 10 active installs first, so recruit design partners.",
+        "who": "you",
+        "ev": "docs",
+        "src": [
+          "slack-changelog",
+          "slack-rl-faq"
+        ]
+      }
+    ],
+    "snippet": {
+      "label": "App manifest your agent can generate",
+      "lang": "yaml",
+      "code": "display_information:\n  name: Acme Agent\noauth_config:\n  redirect_urls:\n    - https://YOUR-CALLBACK-URL\n  scopes:\n    bot:\n      - channels:read\n      - chat:write\nsettings:\n  org_deploy_enabled: false\n  socket_mode_enabled: false"
+    },
+    "nuances": [
+      {
+        "t": "Reading history is throttled for unlisted apps",
+        "d": "For commercially distributed apps outside the Marketplace, conversations.history and conversations.replies are limited to 1 request per minute, with the page size cut to 15 objects. This hit new apps from May 29, 2025 and existing installs from March 3, 2026. An agent that summarizes channels will feel this immediately.",
+        "impact": "high",
+        "ev": "docs",
+        "src": [
+          "slack-rl-changelog",
+          "slack-rl-ja",
+          "slack-changelog"
+        ]
+      },
+      {
+        "t": "The terms point commercial apps to the Marketplace",
+        "d": "Slack's updated API terms say the Marketplace is the only appropriate channel for commercially distributing apps, including unlisted ones.",
+        "impact": "high",
+        "ev": "docs",
+        "src": [
+          "slack-changelog"
+        ]
+      },
+      {
+        "t": "Internal apps are unaffected",
+        "d": "Apps a customer builds for their own workspace keep their existing rate limits.",
+        "impact": "low",
+        "ev": "docs",
+        "src": [
+          "slack-changelog"
+        ]
+      },
+      {
+        "t": "Classic apps are being retired",
+        "d": "If you are reusing an old classic app, Slack's deprecation date is November 16, 2026. Create a new app instead.",
+        "impact": "medium",
+        "ev": "docs",
+        "src": [
+          "slack-changelog"
+        ]
+      }
+    ],
+    "blockers": [
+      {
+        "if": "Your agent returns only 15 messages and hits 429 errors",
+        "then": "You are on the non-Marketplace limit. Cache aggressively, backfill slowly using the Retry-After header, and start the Marketplace path."
+      },
+      {
+        "if": "You cannot reach 10 active installs for the Marketplace",
+        "then": "Ship as unlisted to design partners first, within the rate limits, and submit once you have the installs."
+      }
+    ],
+    "agent": {
+      "can": [
+        "Generate the app manifest with the right scopes and redirect URL",
+        "Pick the minimum scopes from your feature list",
+        "Draft Marketplace listing copy and scope justifications",
+        "Flag API calls that the rate limit will affect"
+      ],
+      "you": [
+        "Sign in and create the app",
+        "Install it to a workspace and test",
+        "Activate distribution",
+        "Recruit the first 10 installs and submit to the Marketplace"
+      ]
+    },
+    "tested": [
+      {
+        "what": "Attempted to reach api.slack.com/apps from the agent environment",
+        "result": "Not reachable from the sandbox (network allowlist). Setup steps rely on Slack's docs and are marked accordingly.",
+        "date": "2026-10-28"
+      }
+    ],
+    "uncertain": [
+      "Marketplace review time. Slack does not publish one; the range shown is a planning estimate, not a sourced figure.",
+      "Slack's changelog says the 10-install entry requirement is changing. Check the current Marketplace guidelines before you plan around it.",
+      "Exact wording of the Manage Distribution checklist (not verified first-hand)."
+    ],
+    "sources": [
+      {
+        "id": "slack-rl-changelog",
+        "title": "Slack changelog: Rate limit changes for non-Marketplace apps",
+        "url": "https://docs.slack.dev/changelog/2025/05/29/rate-limit-changes-for-non-marketplace-apps",
+        "kind": "official"
+      },
+      {
+        "id": "slack-rl-ja",
+        "title": "Slack docs (JA): rate limit FAQ, including the 15-object limit",
+        "url": "https://docs.slack.dev/ja-jp/2025-05-terms-rate-limit-update-and-faq",
+        "kind": "official"
+      },
+      {
+        "id": "slack-rl-faq",
+        "title": "Slack: Terms and rate limit update FAQ",
+        "url": "https://api.slack.com/changelog/2025-05-terms-rate-limit-update-and-faq",
+        "kind": "official"
+      },
+      {
+        "id": "slack-changelog",
+        "title": "Slack developer changelog (terms, March 2026 rollout, Marketplace entry)",
+        "url": "https://api.slack.com/changelog/slack-connect-api-2025",
+        "kind": "official"
+      },
+      {
+        "id": "slack-rl",
+        "title": "Slack docs: Web API rate limits",
+        "url": "https://docs.slack.dev/apis/web-api/rate-limits",
+        "kind": "official"
+      }
+    ]
+  },
+  {
+    "id": "gmail",
+    "name": "Gmail (Google)",
+    "domain": "mail.google.com",
+    "category": "Email",
+    "checked": "2026-10-28",
+    "mode": "verified",
+    "headline": "The OAuth client takes 20 minutes. Reading email is the longest path in this library: Google verification plus an annual third-party security assessment, usually weeks and not free.",
+    "startUrl": "https://console.cloud.google.com/apis/credentials",
+    "paths": [
+      {
+        "name": "Testing mode (up to 100 test users)",
+        "tier": "self-serve",
+        "hands": [
+          20,
+          45
+        ],
+        "wait": [
+          0,
+          0
+        ],
+        "note": "Refresh tokens expire after 7 days. Fine for demos, breaks production sync."
+      },
+      {
+        "name": "Send only (gmail.send, a sensitive scope)",
+        "tier": "review-required",
+        "hands": [
+          180,
+          480
+        ],
+        "wait": [
+          4320,
+          20160
+        ],
+        "waitUnknown": true,
+        "note": "Verification and a demo video, but no security assessment."
+      },
+      {
+        "name": "Read or modify mail (restricted scopes)",
+        "tier": "gated",
+        "hands": [
+          960,
+          2880
+        ],
+        "wait": [
+          14400,
+          86400
+        ],
+        "note": "Verification plus a CASA security assessment, renewed every year."
+      }
+    ],
+    "prereqs": [
+      {
+        "t": "A Google Cloud project with the Gmail API enabled.",
+        "ev": "report",
+        "src": [
+          "unified-gmail"
+        ]
+      },
+      {
+        "t": "A public homepage and privacy policy on a domain you own.",
+        "ev": "model",
+        "src": []
+      },
+      {
+        "t": "A demo video showing how you use each sensitive or restricted scope.",
+        "ev": "report",
+        "src": [
+          "nylas"
+        ]
+      },
+      {
+        "t": "For restricted scopes: your product must fit one of Google's permitted Gmail application types.",
+        "ev": "report",
+        "src": [
+          "unified-gmail"
+        ]
+      },
+      {
+        "t": "For restricted scopes: budget for a CASA assessment from a Google-approved lab.",
+        "ev": "report",
+        "src": [
+          "nango"
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "t": "Choose your scopes first",
+        "d": "This decides the whole timeline. Every Gmail read scope, including gmail.readonly, is restricted. gmail.send is only sensitive. If your agent only sends mail, stop at gmail.send.",
+        "who": "agent",
+        "ev": "report",
+        "src": [
+          "unified-gmail"
+        ]
+      },
+      {
+        "t": "Create the project and enable the Gmail API",
+        "d": "In Google Cloud console, create a project for production (separate from dev) and enable the Gmail API.",
+        "who": "you",
+        "ev": "report",
+        "src": [
+          "unified-gmail"
+        ]
+      },
+      {
+        "t": "Configure branding and audience",
+        "d": "Set the app name, logo, support email, homepage and privacy policy. Choose External unless only your own Workspace users will connect.",
+        "who": "both",
+        "ev": "model",
+        "src": []
+      },
+      {
+        "t": "Create the OAuth client",
+        "d": "Create a Web application client and add your integration platform's redirect URI exactly.",
+        "who": "you",
+        "ev": "model",
+        "src": []
+      },
+      {
+        "t": "Test with up to 100 test users",
+        "d": "Add test users and run real connections. Expect refresh tokens to expire after 7 days in this mode.",
+        "who": "you",
+        "ev": "report",
+        "src": [
+          "nylas",
+          "nango"
+        ]
+      },
+      {
+        "t": "Submit for verification",
+        "d": "Submit scope justifications and the demo video. For restricted scopes, start the CASA assessment with an approved lab in parallel.",
+        "who": "both",
+        "ev": "report",
+        "src": [
+          "nango",
+          "nylas"
+        ]
+      },
+      {
+        "t": "Plan the annual renewal",
+        "d": "Restricted-scope verification and CASA must be renewed every year. Put the date on a calendar.",
+        "who": "you",
+        "ev": "report",
+        "src": [
+          "nango"
+        ]
+      }
+    ],
+    "nuances": [
+      {
+        "t": "Testing mode breaks after a week",
+        "d": "External apps in Testing get refresh tokens that expire after 7 days, so a connection that works on Monday stops syncing the next week.",
+        "impact": "high",
+        "ev": "report",
+        "src": [
+          "nylas",
+          "nango"
+        ]
+      },
+      {
+        "t": "100-user ceiling before review",
+        "d": "Until verified, only 100 users can ever authorize the app. Spend them on real testers, not on your team's repeated logins.",
+        "impact": "high",
+        "ev": "report",
+        "src": [
+          "nango"
+        ]
+      },
+      {
+        "t": "Password changes revoke Gmail tokens",
+        "d": "When a user changes their Google password, refresh tokens with Gmail scopes are invalidated. Build a reconnect prompt.",
+        "impact": "medium",
+        "ev": "report",
+        "src": [
+          "unified-gmail"
+        ]
+      },
+      {
+        "t": "Internal apps skip verification",
+        "d": "If only users in your own Google Workspace organization connect, an Internal app avoids verification entirely.",
+        "impact": "medium",
+        "ev": "report",
+        "src": [
+          "nylas"
+        ]
+      },
+      {
+        "t": "gmail.compose is restricted",
+        "d": "Drafting is restricted even though sending is not. Scope names are a poor guide to risk tier; check Google's list.",
+        "impact": "medium",
+        "ev": "report",
+        "src": [
+          "unified-gmail"
+        ]
+      }
+    ],
+    "blockers": [
+      {
+        "if": "Users see access_denied",
+        "then": "The user is not on the test user list, or you requested a restricted scope that is not yet verified."
+      },
+      {
+        "if": "Verification asks for changes to your privacy policy",
+        "then": "Google expects the policy to describe exactly how Gmail data is used, stored and shared. Your agent can draft the section; legal should approve it."
+      },
+      {
+        "if": "CASA finds vulnerabilities",
+        "then": "Fix and rescan. Running a static scan before engaging a lab avoids most first-round failures."
+      }
+    ],
+    "agent": {
+      "can": [
+        "Map your features to the narrowest scope set and its tier",
+        "Draft scope justifications and the privacy policy section on Gmail data",
+        "Write a script and shot list for the demo video",
+        "Pre-check your app with a static security scan before CASA"
+      ],
+      "you": [
+        "Create the project and OAuth client in Google Cloud",
+        "Verify domain ownership",
+        "Record the demo video",
+        "Pay for and complete the CASA assessment",
+        "Submit and answer reviewer emails"
+      ]
+    },
+    "tested": [
+      {
+        "what": "Attempted to reach console.cloud.google.com from the agent environment",
+        "result": "Not reachable from the sandbox. Guidance draws on Google support pages and integration-vendor runbooks (Nango, Nylas, Unified), labeled per claim.",
+        "date": "2026-10-28"
+      }
+    ],
+    "uncertain": [
+      "Total wait. Nango reports CASA Tier 2 can finish in about 5 days and suggests budgeting 10 to 20; Google says it can take several weeks or longer. The range shown spans both.",
+      "CASA cost varies by lab and tier; no reliable figure was found.",
+      "Wait for sensitive-only verification is an estimate, not a sourced figure."
+    ],
+    "sources": [
+      {
+        "id": "nango",
+        "title": "Nango: Google security review guide",
+        "url": "https://nango.dev/docs/integrations/google-security-review",
+        "kind": "third-party"
+      },
+      {
+        "id": "nylas",
+        "title": "Nylas: Fix Google access_denied (testing mode, restricted scopes)",
+        "url": "https://developer.nylas.com/docs/cookbook/use-cases/build/fix-google-access-denied/",
+        "kind": "third-party"
+      },
+      {
+        "id": "unified-gmail",
+        "title": "Unified.to: Gmail OAuth app runbook (scope tiers)",
+        "url": "https://docs.unified.to/skills/gmail-oauth-app/SKILL.md",
+        "kind": "third-party"
+      },
+      {
+        "id": "google-restricted",
+        "title": "Google Cloud Help: Restricted scope verification (linked from Nango; not fetched in this check)",
+        "url": "https://support.google.com/cloud/answer/13464325?hl=en",
+        "kind": "official"
+      },
+      {
+        "id": "google-annual",
+        "title": "Google Cloud Help: Annual recertification (linked from Nango; not fetched in this check)",
+        "url": "https://support.google.com/cloud/answer/13463816?hl=en",
+        "kind": "official"
+      }
+    ]
+  },
+  {
+    "id": "linkedin",
+    "name": "LinkedIn",
+    "domain": "linkedin.com",
+    "category": "Social",
+    "checked": "2026-10-28",
+    "mode": "verified",
+    "headline": "Sign-in and posting as a member are instant checkboxes. Anything involving company pages is a separate product, a separate app, and a review queue.",
+    "startUrl": "https://www.linkedin.com/developers/apps",
+    "paths": [
+      {
+        "name": "Sign in and post as the member",
+        "tier": "self-serve",
+        "hands": [
+          15,
+          30
+        ],
+        "wait": [
+          0,
+          0
+        ],
+        "note": "OpenID Connect plus Share on LinkedIn, granted instantly."
+      },
+      {
+        "name": "Manage company pages (Community Management API)",
+        "tier": "review-required",
+        "hands": [
+          120,
+          360
+        ],
+        "wait": [
+          4320,
+          36000
+        ],
+        "note": "Development tier, then Standard tier with a screencast. Needs its own app."
+      }
+    ],
+    "prereqs": [
+      {
+        "t": "A LinkedIn Company Page you administer. Every app must be associated with one.",
+        "ev": "report",
+        "src": [
+          "devto-li",
+          "artifism-li"
+        ]
+      },
+      {
+        "t": "The page admin available to approve the verification link.",
+        "ev": "report",
+        "src": [
+          "artifism-li"
+        ]
+      },
+      {
+        "t": "An app logo and your redirect URL.",
+        "ev": "report",
+        "src": [
+          "serval-li"
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "t": "Create the app",
+        "d": "At linkedin.com/developers/apps, create an app, associate your Company Page, upload a logo and accept the terms.",
+        "who": "you",
+        "ev": "report",
+        "src": [
+          "serval-li",
+          "n8n-li"
+        ]
+      },
+      {
+        "t": "Verify the page association",
+        "d": "Generate the verification URL in app settings and have a page admin open it. The app does nothing until it shows Verified.",
+        "who": "you",
+        "ev": "report",
+        "src": [
+          "artifism-li",
+          "devto-li"
+        ]
+      },
+      {
+        "t": "Add the self-serve products",
+        "d": "On the Products tab, add Sign In with LinkedIn using OpenID Connect (openid, profile, email) and Share on LinkedIn (w_member_social).",
+        "who": "you",
+        "ev": "report",
+        "src": [
+          "upload-post-li",
+          "devto-li"
+        ]
+      },
+      {
+        "t": "Add the redirect URL and copy credentials",
+        "d": "On the Auth tab, add your platform's redirect URL and copy the client ID and secret into your auth config.",
+        "who": "you",
+        "ev": "report",
+        "src": [
+          "serval-li"
+        ]
+      },
+      {
+        "t": "For company pages, create a second app",
+        "d": "Community Management API cannot share an app with other products. Create a dedicated app and apply; expect a Development tier first and a Standard tier review with a screencast.",
+        "who": "both",
+        "ev": "report",
+        "src": [
+          "devto-li",
+          "upload-post-li"
+        ]
+      }
+    ],
+    "nuances": [
+      {
+        "t": "Company page features need a separate app",
+        "d": "If you add Community Management API to the same app as sign-in, you will have to split them. Plan two apps from the start.",
+        "impact": "high",
+        "ev": "report",
+        "src": [
+          "devto-li",
+          "upload-post-li"
+        ]
+      },
+      {
+        "t": "Don't use a placeholder page",
+        "d": "LinkedIn gates several products on a verified Company Page. Attach your real company page, not a throwaway.",
+        "impact": "medium",
+        "ev": "report",
+        "src": [
+          "serval-li"
+        ]
+      },
+      {
+        "t": "Sign In with LinkedIn is not identity verification",
+        "d": "It proves account control, not that the person is who their profile says.",
+        "impact": "low",
+        "ev": "report",
+        "src": [
+          "upload-post-li"
+        ]
+      }
+    ],
+    "blockers": [
+      {
+        "if": "The app shows Unverified",
+        "then": "The page association has not been approved. Send the verification URL to a page admin."
+      },
+      {
+        "if": "You get unauthorized_scope_error for organization scopes",
+        "then": "Those need Community Management API on a dedicated app, approved through review."
+      }
+    ],
+    "agent": {
+      "can": [
+        "Tell you which products your features need, and whether you need one app or two",
+        "Draft the Community Management API application and screencast script",
+        "Check that requested scopes match the added products"
+      ],
+      "you": [
+        "Create the app while signed in",
+        "Get a page admin to approve verification",
+        "Submit the Community Management API application"
+      ]
+    },
+    "tested": [
+      {
+        "what": "Attempted to reach linkedin.com/developers/apps from the agent environment",
+        "result": "Not reachable from the sandbox. A third-party developer reported completing the self-serve path end to end in about 15 minutes in 2026.",
+        "date": "2026-10-28"
+      }
+    ],
+    "uncertain": [
+      "Community Management API review time. Sources range from several days to 20 to 25 days.",
+      "LinkedIn's official Learn docs were not fetched directly in this check; most step details come from integration vendors' setup guides."
+    ],
+    "sources": [
+      {
+        "id": "devto-li",
+        "title": "DEV Community: LinkedIn OAuth walkthrough tested in 2026",
+        "url": "https://dev.to/broke2builtai/how-to-post-to-linkedin-from-a-script-the-15-minute-oauth-walkthrough-2026-58fp",
+        "kind": "third-party"
+      },
+      {
+        "id": "upload-post-li",
+        "title": "Upload-Post: LinkedIn API developer guide",
+        "url": "https://www.upload-post.com/linkedin-api/",
+        "kind": "third-party"
+      },
+      {
+        "id": "serval-li",
+        "title": "Serval: LinkedIn integration setup",
+        "url": "https://docs.serval.com/sections/integrations/linkedin",
+        "kind": "third-party"
+      },
+      {
+        "id": "artifism-li",
+        "title": "Artifism: LinkedIn developer app setup (page verification)",
+        "url": "https://docs.artifism.techvill.net/customer/linkedin-api-setup",
+        "kind": "third-party"
+      },
+      {
+        "id": "n8n-li",
+        "title": "n8n Docs: LinkedIn credentials",
+        "url": "https://docs.n8n.io/credentials/linkedin/",
+        "kind": "third-party"
+      },
+      {
+        "id": "li-cm",
+        "title": "Microsoft Learn: Community Management API overview",
+        "url": "https://learn.microsoft.com/en-us/linkedin/marketing/community-management/community-management-overview",
+        "kind": "official"
+      }
+    ]
+  },
+  {
+    "id": "salesforce",
+    "name": "Salesforce",
+    "domain": "salesforce.com",
+    "category": "CRM",
+    "checked": "2026-10-28",
+    "mode": "verified",
+    "headline": "Most tutorials online are now wrong. New Connected Apps are disabled by default since Spring '26, and customer orgs block uninstalled apps, so plan for an External Client App that each customer's admin installs.",
+    "startUrl": "https://developer.salesforce.com",
+    "paths": [
+      {
+        "name": "External Client App in your own org",
+        "tier": "self-serve",
+        "hands": [
+          60,
+          180
+        ],
+        "wait": [
+          0,
+          0
+        ],
+        "note": "Works for your org. Reaching customer orgs needs more (below)."
+      },
+      {
+        "name": "Customers connect their own orgs",
+        "tier": "customer-approval",
+        "hands": [
+          240,
+          960
+        ],
+        "wait": [
+          0,
+          10080
+        ],
+        "waitUnknown": true,
+        "note": "Package the app and have each customer admin install it."
+      }
+    ],
+    "prereqs": [
+      {
+        "t": "A Salesforce org you control, such as a free Developer Edition org.",
+        "ev": "model",
+        "src": []
+      },
+      {
+        "t": "Admin access in that org.",
+        "ev": "docs",
+        "src": [
+          "sf-cli"
+        ]
+      },
+      {
+        "t": "To reach customer orgs: a packaging setup (second-generation packaging) and customer admins willing to install.",
+        "ev": "report",
+        "src": [
+          "paragon-sf"
+        ]
+      }
+    ],
+    "steps": [
+      {
+        "t": "Create an External Client App, not a Connected App",
+        "d": "From Setup, open External Client App Manager and create a new app. Connected App creation is disabled by default and needs Salesforce Support to re-enable.",
+        "who": "you",
+        "ev": "docs",
+        "src": [
+          "sf-mobile",
+          "sf-cli"
+        ]
+      },
+      {
+        "t": "Enable OAuth and set the callback",
+        "d": "Enable OAuth, add your platform's callback URL and select scopes (typically api and refresh_token).",
+        "who": "both",
+        "ev": "model",
+        "src": []
+      },
+      {
+        "t": "Copy the consumer key and secret",
+        "d": "Paste them into your auth config. Use the web server flow; External Client Apps do not support the username-password flow.",
+        "who": "you",
+        "ev": "report",
+        "src": [
+          "striim-sf"
+        ]
+      },
+      {
+        "t": "Package it for customers",
+        "d": "Add the app to a second-generation package so customer orgs can install it, and give customers install instructions.",
+        "who": "both",
+        "ev": "report",
+        "src": [
+          "paragon-sf"
+        ]
+      },
+      {
+        "t": "Have each customer admin install it",
+        "d": "Since September 2025, users are blocked from authorizing uninstalled connected apps unless an admin installs the app or grants a bypass permission.",
+        "who": "you",
+        "ev": "report",
+        "src": [
+          "searchunify-sf",
+          "workspan-sf"
+        ]
+      }
+    ],
+    "nuances": [
+      {
+        "t": "Connected Apps are being retired",
+        "d": "Creation of new Connected Apps is restricted as of Spring '26. Existing ones keep working; new integrations should use External Client Apps.",
+        "impact": "high",
+        "ev": "docs",
+        "src": [
+          "sf-mobile",
+          "sf-cli"
+        ]
+      },
+      {
+        "t": "Uninstalled apps are blocked for new users",
+        "d": "New users cannot authorize an uninstalled connected app unless they hold Approve Uninstalled Connected Apps or Use Any API Client. Expect support tickets from customers who skip the install step.",
+        "impact": "high",
+        "ev": "report",
+        "src": [
+          "searchunify-sf",
+          "workspan-sf",
+          "paragon-sf"
+        ]
+      },
+      {
+        "t": "No username-password flow",
+        "d": "External Client Apps drop the username-password OAuth flow some older scripts relied on.",
+        "impact": "medium",
+        "ev": "report",
+        "src": [
+          "striim-sf"
+        ]
+      },
+      {
+        "t": "Sandbox refreshes lose local apps",
+        "d": "Local External Client Apps are not copied when a sandbox is cloned or refreshed; only packaged ones are.",
+        "impact": "low",
+        "ev": "report",
+        "src": [
+          "striim-sf"
+        ]
+      }
+    ],
+    "blockers": [
+      {
+        "if": "There is no New Connected App button",
+        "then": "Expected since Spring '26. Use External Client App Manager, or ask Salesforce Support to re-enable Connected Apps if you truly need one."
+      },
+      {
+        "if": "Customer users get blocked when connecting",
+        "then": "Their admin must install the app (Setup, Connected Apps OAuth Usage, Install) or grant the bypass permission to specific users."
+      }
+    ],
+    "agent": {
+      "can": [
+        "Spot outdated Connected App instructions in your docs",
+        "Draft the customer admin install guide",
+        "Generate packaging metadata for the app",
+        "Pick the right OAuth flow for your use case"
+      ],
+      "you": [
+        "Create the org and the External Client App",
+        "Set up packaging and a Dev Hub",
+        "Coordinate installs with each customer admin"
+      ]
+    },
+    "tested": [
+      {
+        "what": "Attempted to reach Salesforce setup pages from the agent environment",
+        "result": "Not reachable from the sandbox. Guidance draws on Salesforce developer docs and vendor migration notes.",
+        "date": "2026-10-28"
+      }
+    ],
+    "uncertain": [
+      "Whether an unpackaged External Client App can serve users in other orgs. Vendor notes imply packaging is required; Salesforce's own wording was not confirmed directly.",
+      "AppExchange security review timing, if you choose to list. Not researched in this pass."
+    ],
+    "sources": [
+      {
+        "id": "sf-mobile",
+        "title": "Salesforce Developers: Connected Apps (creation restricted as of Spring '26)",
+        "url": "https://developer.salesforce.com/docs/atlas.en-us.pkg1_dev.meta/pkg2_dev/connected_apps.htm",
+        "kind": "official"
+      },
+      {
+        "id": "sf-cli",
+        "title": "Salesforce Developers: Create a Connected App in your org (CLI guide)",
+        "url": "https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_connected_app.htm",
+        "kind": "official"
+      },
+      {
+        "id": "striim-sf",
+        "title": "Striim: Salesforce Connected Apps and External Client Apps",
+        "url": "https://striim.com/docs/en/salesforce-connected-apps-and-external-client-apps.html",
+        "kind": "third-party"
+      },
+      {
+        "id": "paragon-sf",
+        "title": "Paragon: Salesforce Connected App changes",
+        "url": "https://www.useparagon.com/blog/salesforce-connected-app-changes",
+        "kind": "third-party"
+      },
+      {
+        "id": "searchunify-sf",
+        "title": "SearchUnify: Connected App usage restrictions timeline",
+        "url": "https://community.searchunify.com/hc/en-us/community/posts/30013945194525-Salesforce-Connected-App-Usage-Restrictions-Are-Coming",
+        "kind": "third-party"
+      },
+      {
+        "id": "workspan-sf",
+        "title": "WorkSpan: Connected App usage restrictions",
+        "url": "https://support.workspan.com/hc/en-us/articles/44432397224851",
+        "kind": "third-party"
+      }
+    ]
+  },
+  {
+    "id": "x",
+    "name": "X (Twitter)",
+    "domain": "x.com",
+    "category": "Social",
+    "checked": "2026-10-28",
+    "mode": "verified",
+    "headline": "No review queue, but no free lunch: since February 2026 every new developer pays per request, and X's terms point commercial products to an Enterprise contract.",
+    "startUrl": "https://developer.x.com",
+    "paths": [
+      {
+        "name": "Pay-per-use app",
+        "tier": "paid",
+        "hands": [
+          20,
+          45
+        ],
+        "wait": [
+          0,
+          0
+        ],
+        "note": "Buy credits before your first call. Reads capped at 2 million posts a month."
+      },
+      {
+        "name": "Commercial product at scale",
+        "tier": "gated",
+        "hands": [
+          120,
+          480
+        ],
+        "wait": [
+          10080,
+          60480
+        ],
+        "waitUnknown": true,
+        "note": "Enterprise plan, negotiated with X sales."
+      }
+    ],
+    "prereqs": [
+      {
+        "t": "An X developer account, with a description of your use case.",
+        "ev": "report",
+        "src": [
+          "singh-x"
+        ]
+      },
+      {
+        "t": "A payment method and prepaid credits.",
+        "ev": "report",
+        "src": [
+          "gigazine-x",
+          "postproxy-x"
+        ]
+      },
+      {
+        "t": "Your callback URL and a website URL.",
+        "ev": "model",
+        "src": []
+      }
+    ],
+    "steps": [
+      {
+        "t": "Create the developer account",
+        "d": "Sign up at developer.x.com and describe your use case. New accounts start on pay-per-use.",
+        "who": "you",
+        "ev": "report",
+        "src": [
+          "singh-x",
+          "postproxy-x"
+        ]
+      },
+      {
+        "t": "Create a project and app",
+        "d": "In the Developer Console, create the app that will hold your OAuth credentials.",
+        "who": "you",
+        "ev": "model",
+        "src": []
+      },
+      {
+        "t": "Turn on OAuth 2.0",
+        "d": "In user authentication settings, enable OAuth 2.0 as a web app (confidential client), and add the callback and website URLs.",
+        "who": "both",
+        "ev": "model",
+        "src": []
+      },
+      {
+        "t": "Choose scopes",
+        "d": "Typical agent scopes are tweet.read, users.read and tweet.write; add offline.access to get refresh tokens.",
+        "who": "agent",
+        "ev": "model",
+        "src": []
+      },
+      {
+        "t": "Buy credits and set a spend limit",
+        "d": "Load credits in the Developer Console and set limits before connecting users, so a runaway loop drains a capped balance rather than your card.",
+        "who": "you",
+        "ev": "report",
+        "src": [
+          "singh-x"
+        ]
+      }
+    ],
+    "nuances": [
+      {
+        "t": "The free tier is gone for new developers",
+        "d": "On February 6, 2026, X made pay-per-use the default for new developers. Price varies by endpoint; check the Developer Console for current rates.",
+        "impact": "high",
+        "ev": "report",
+        "src": [
+          "postproxy-x",
+          "singh-x",
+          "gigazine-x"
+        ]
+      },
+      {
+        "t": "Self-serve is meant for limited use",
+        "d": "Per an Open Terms Archive memo on X's developer terms, self-serve use targets prototypes and apps with a limited number of end users; commercial use still requires the Enterprise plan. Read the current terms before launching to customers.",
+        "impact": "high",
+        "ev": "report",
+        "src": [
+          "ota-x"
+        ]
+      },
+      {
+        "t": "Read cap",
+        "d": "Pay-per-use reads are capped at 2 million posts per month before Enterprise is needed.",
+        "impact": "medium",
+        "ev": "report",
+        "src": [
+          "postproxy-x",
+          "opentweet-x"
+        ]
+      },
+      {
+        "t": "Every user's agent actions cost you",
+        "d": "Each call your users' agents make spends your credits. Model per-user cost before pricing your product.",
+        "impact": "medium",
+        "ev": "model",
+        "src": []
+      }
+    ],
+    "blockers": [
+      {
+        "if": "Calls fail with a payment or credits error",
+        "then": "Your balance is empty. Top up, and turn on auto-recharge with a cap."
+      },
+      {
+        "if": "Your product is commercial with many end users",
+        "then": "Contact X about Enterprise before launch; plan the timeline around a sales conversation."
+      }
+    ],
+    "agent": {
+      "can": [
+        "Estimate monthly API cost from your expected usage",
+        "Pick scopes and the OAuth 2.0 client type",
+        "Draft the use case description",
+        "Summarize current developer terms for your use case"
+      ],
+      "you": [
+        "Create the developer account and app",
+        "Add payment and set spend limits",
+        "Decide whether you need Enterprise, and talk to X"
+      ]
+    },
+    "tested": [
+      {
+        "what": "Attempted to reach developer.x.com from the agent environment",
+        "result": "Not reachable from the sandbox. No official X page was fetched in this check; claims are from secondary reports and labeled so.",
+        "date": "2026-10-28"
+      }
+    ],
+    "uncertain": [
+      "Exact per-request prices. Third-party reports cite about $0.01 per post created and $0.005 per post read; X shows current prices in the console.",
+      "Whether X still reviews developer account use cases before granting access.",
+      "Enterprise timeline and cost; not publicly documented."
+    ],
+    "sources": [
+      {
+        "id": "postproxy-x",
+        "title": "PostProxy: X API pricing in 2026",
+        "url": "https://www.postproxy.dev/blog/x-api-pricing-2026/",
+        "kind": "third-party"
+      },
+      {
+        "id": "singh-x",
+        "title": "X API developer account approval and pay-per-use (2026)",
+        "url": "https://singhamandeep.com/?p=1353",
+        "kind": "third-party"
+      },
+      {
+        "id": "gigazine-x",
+        "title": "GIGAZINE: X announces pay-as-you-go API pricing",
+        "url": "https://gigazine.net/gsc_news/en/20260209-x-api-pay-per-use",
+        "kind": "third-party"
+      },
+      {
+        "id": "ota-x",
+        "title": "Open Terms Archive: X replaces its $200 plan with pay-per-use",
+        "url": "https://opentermsarchive.org/en/memos/x-replaces-its-dollar200-entry-level-api-plan-with-a-pay-per-use-model/",
+        "kind": "third-party"
+      },
+      {
+        "id": "opentweet-x",
+        "title": "OpenTweet: X API pay-per-use explained",
+        "url": "https://opentweet.io/how-to/x-api-pay-per-use-explained",
+        "kind": "third-party"
+      },
+      {
+        "id": "x-pricing",
+        "title": "X Developer Platform: Pricing",
+        "url": "https://docs.x.com/x-api/getting-started/pricing",
+        "kind": "official"
+      }
+    ]
+  }
+]
