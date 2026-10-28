@@ -1,0 +1,602 @@
+[
+ {
+  "id": "github",
+  "name": "GitHub",
+  "domain": "github.com",
+  "category": "Developer tools"
+ },
+ {
+  "id": "slack",
+  "name": "Slack",
+  "domain": "slack.com",
+  "category": "Communication"
+ },
+ {
+  "id": "gmail",
+  "name": "Gmail (Google)",
+  "domain": "mail.google.com",
+  "category": "Email"
+ },
+ {
+  "id": "linkedin",
+  "name": "LinkedIn",
+  "domain": "linkedin.com",
+  "category": "Social"
+ },
+ {
+  "id": "salesforce",
+  "name": "Salesforce",
+  "domain": "salesforce.com",
+  "category": "CRM"
+ },
+ {
+  "id": "x",
+  "name": "X (Twitter)",
+  "domain": "x.com",
+  "category": "Social"
+ },
+ {
+  "id": "google-calendar",
+  "name": "Google Calendar",
+  "domain": "calendar.google.com",
+  "category": "Calendar"
+ },
+ {
+  "id": "google-drive",
+  "name": "Google Drive",
+  "domain": "drive.google.com",
+  "category": "Files"
+ },
+ {
+  "id": "google-sheets",
+  "name": "Google Sheets",
+  "domain": "sheets.google.com",
+  "category": "Productivity"
+ },
+ {
+  "id": "google-docs",
+  "name": "Google Docs",
+  "domain": "docs.google.com",
+  "category": "Productivity"
+ },
+ {
+  "id": "youtube",
+  "name": "YouTube",
+  "domain": "youtube.com",
+  "category": "Social"
+ },
+ {
+  "id": "microsoft-outlook",
+  "name": "Microsoft Outlook",
+  "domain": "outlook.com",
+  "category": "Email"
+ },
+ {
+  "id": "microsoft-teams",
+  "name": "Microsoft Teams",
+  "domain": "teams.microsoft.com",
+  "category": "Communication"
+ },
+ {
+  "id": "onedrive",
+  "name": "OneDrive",
+  "domain": "onedrive.com",
+  "category": "Files"
+ },
+ {
+  "id": "sharepoint",
+  "name": "SharePoint",
+  "domain": "sharepoint.com",
+  "category": "Files"
+ },
+ {
+  "id": "microsoft-excel-graph",
+  "name": "Microsoft Excel (Graph)",
+  "domain": "microsoft.com",
+  "category": "Productivity"
+ },
+ {
+  "id": "notion",
+  "name": "Notion",
+  "domain": "notion.so",
+  "category": "Productivity"
+ },
+ {
+  "id": "linear",
+  "name": "Linear",
+  "domain": "linear.app",
+  "category": "Project management"
+ },
+ {
+  "id": "jira",
+  "name": "Jira",
+  "domain": "atlassian.com",
+  "category": "Project management"
+ },
+ {
+  "id": "confluence",
+  "name": "Confluence",
+  "domain": "atlassian.com",
+  "category": "Knowledge base"
+ },
+ {
+  "id": "asana",
+  "name": "Asana",
+  "domain": "asana.com",
+  "category": "Project management"
+ },
+ {
+  "id": "trello",
+  "name": "Trello",
+  "domain": "trello.com",
+  "category": "Project management"
+ },
+ {
+  "id": "clickup",
+  "name": "ClickUp",
+  "domain": "clickup.com",
+  "category": "Project management"
+ },
+ {
+  "id": "monday-com",
+  "name": "Monday.com",
+  "domain": "monday.com",
+  "category": "Project management"
+ },
+ {
+  "id": "airtable",
+  "name": "Airtable",
+  "domain": "airtable.com",
+  "category": "Database"
+ },
+ {
+  "id": "hubspot",
+  "name": "HubSpot",
+  "domain": "hubspot.com",
+  "category": "CRM"
+ },
+ {
+  "id": "pipedrive",
+  "name": "Pipedrive",
+  "domain": "pipedrive.com",
+  "category": "CRM"
+ },
+ {
+  "id": "zoho-crm",
+  "name": "Zoho CRM",
+  "domain": "zoho.com",
+  "category": "CRM"
+ },
+ {
+  "id": "attio",
+  "name": "Attio",
+  "domain": "attio.com",
+  "category": "CRM"
+ },
+ {
+  "id": "close",
+  "name": "Close",
+  "domain": "close.com",
+  "category": "CRM"
+ },
+ {
+  "id": "intercom",
+  "name": "Intercom",
+  "domain": "intercom.com",
+  "category": "Support"
+ },
+ {
+  "id": "zendesk",
+  "name": "Zendesk",
+  "domain": "zendesk.com",
+  "category": "Support"
+ },
+ {
+  "id": "freshdesk",
+  "name": "Freshdesk",
+  "domain": "freshdesk.com",
+  "category": "Support"
+ },
+ {
+  "id": "help-scout",
+  "name": "Help Scout",
+  "domain": "helpscout.com",
+  "category": "Support"
+ },
+ {
+  "id": "front",
+  "name": "Front",
+  "domain": "front.com",
+  "category": "Support"
+ },
+ {
+  "id": "discord",
+  "name": "Discord",
+  "domain": "discord.com",
+  "category": "Communication"
+ },
+ {
+  "id": "zoom",
+  "name": "Zoom",
+  "domain": "zoom.us",
+  "category": "Meetings"
+ },
+ {
+  "id": "calendly",
+  "name": "Calendly",
+  "domain": "calendly.com",
+  "category": "Calendar"
+ },
+ {
+  "id": "cal-com",
+  "name": "Cal.com",
+  "domain": "cal.com",
+  "category": "Calendar"
+ },
+ {
+  "id": "dropbox",
+  "name": "Dropbox",
+  "domain": "dropbox.com",
+  "category": "Files"
+ },
+ {
+  "id": "box",
+  "name": "Box",
+  "domain": "box.com",
+  "category": "Files"
+ },
+ {
+  "id": "figma",
+  "name": "Figma",
+  "domain": "figma.com",
+  "category": "Design"
+ },
+ {
+  "id": "canva",
+  "name": "Canva",
+  "domain": "canva.com",
+  "category": "Design"
+ },
+ {
+  "id": "miro",
+  "name": "Miro",
+  "domain": "miro.com",
+  "category": "Design"
+ },
+ {
+  "id": "gitlab",
+  "name": "GitLab",
+  "domain": "gitlab.com",
+  "category": "Developer tools"
+ },
+ {
+  "id": "bitbucket",
+  "name": "Bitbucket",
+  "domain": "bitbucket.org",
+  "category": "Developer tools"
+ },
+ {
+  "id": "vercel",
+  "name": "Vercel",
+  "domain": "vercel.com",
+  "category": "Developer tools"
+ },
+ {
+  "id": "sentry",
+  "name": "Sentry",
+  "domain": "sentry.io",
+  "category": "Developer tools"
+ },
+ {
+  "id": "datadog",
+  "name": "Datadog",
+  "domain": "datadoghq.com",
+  "category": "Developer tools"
+ },
+ {
+  "id": "pagerduty",
+  "name": "PagerDuty",
+  "domain": "pagerduty.com",
+  "category": "Developer tools"
+ },
+ {
+  "id": "stripe",
+  "name": "Stripe",
+  "domain": "stripe.com",
+  "category": "Payments"
+ },
+ {
+  "id": "paypal",
+  "name": "PayPal",
+  "domain": "paypal.com",
+  "category": "Payments"
+ },
+ {
+  "id": "square",
+  "name": "Square",
+  "domain": "squareup.com",
+  "category": "Payments"
+ },
+ {
+  "id": "shopify",
+  "name": "Shopify",
+  "domain": "shopify.com",
+  "category": "Commerce"
+ },
+ {
+  "id": "quickbooks",
+  "name": "QuickBooks",
+  "domain": "quickbooks.intuit.com",
+  "category": "Accounting"
+ },
+ {
+  "id": "xero",
+  "name": "Xero",
+  "domain": "xero.com",
+  "category": "Accounting"
+ },
+ {
+  "id": "freshbooks",
+  "name": "FreshBooks",
+  "domain": "freshbooks.com",
+  "category": "Accounting"
+ },
+ {
+  "id": "brex",
+  "name": "Brex",
+  "domain": "brex.com",
+  "category": "Finance"
+ },
+ {
+  "id": "ramp",
+  "name": "Ramp",
+  "domain": "ramp.com",
+  "category": "Finance"
+ },
+ {
+  "id": "docusign",
+  "name": "DocuSign",
+  "domain": "docusign.com",
+  "category": "Documents"
+ },
+ {
+  "id": "dropbox-sign",
+  "name": "Dropbox Sign",
+  "domain": "sign.dropbox.com",
+  "category": "Documents"
+ },
+ {
+  "id": "pandadoc",
+  "name": "PandaDoc",
+  "domain": "pandadoc.com",
+  "category": "Documents"
+ },
+ {
+  "id": "mailchimp",
+  "name": "Mailchimp",
+  "domain": "mailchimp.com",
+  "category": "Marketing"
+ },
+ {
+  "id": "klaviyo",
+  "name": "Klaviyo",
+  "domain": "klaviyo.com",
+  "category": "Marketing"
+ },
+ {
+  "id": "constant-contact",
+  "name": "Constant Contact",
+  "domain": "constantcontact.com",
+  "category": "Marketing"
+ },
+ {
+  "id": "typeform",
+  "name": "Typeform",
+  "domain": "typeform.com",
+  "category": "Forms"
+ },
+ {
+  "id": "surveymonkey",
+  "name": "SurveyMonkey",
+  "domain": "surveymonkey.com",
+  "category": "Forms"
+ },
+ {
+  "id": "webflow",
+  "name": "Webflow",
+  "domain": "webflow.com",
+  "category": "Websites"
+ },
+ {
+  "id": "wordpress-com",
+  "name": "WordPress.com",
+  "domain": "wordpress.com",
+  "category": "Websites"
+ },
+ {
+  "id": "wix",
+  "name": "Wix",
+  "domain": "wix.com",
+  "category": "Websites"
+ },
+ {
+  "id": "facebook-pages",
+  "name": "Facebook Pages",
+  "domain": "facebook.com",
+  "category": "Social"
+ },
+ {
+  "id": "instagram",
+  "name": "Instagram",
+  "domain": "instagram.com",
+  "category": "Social"
+ },
+ {
+  "id": "threads",
+  "name": "Threads",
+  "domain": "threads.net",
+  "category": "Social"
+ },
+ {
+  "id": "tiktok",
+  "name": "TikTok",
+  "domain": "tiktok.com",
+  "category": "Social"
+ },
+ {
+  "id": "pinterest",
+  "name": "Pinterest",
+  "domain": "pinterest.com",
+  "category": "Social"
+ },
+ {
+  "id": "reddit",
+  "name": "Reddit",
+  "domain": "reddit.com",
+  "category": "Social"
+ },
+ {
+  "id": "spotify",
+  "name": "Spotify",
+  "domain": "spotify.com",
+  "category": "Media"
+ },
+ {
+  "id": "strava",
+  "name": "Strava",
+  "domain": "strava.com",
+  "category": "Health"
+ },
+ {
+  "id": "fitbit",
+  "name": "Fitbit",
+  "domain": "fitbit.com",
+  "category": "Health"
+ },
+ {
+  "id": "oura",
+  "name": "Oura",
+  "domain": "ouraring.com",
+  "category": "Health"
+ },
+ {
+  "id": "todoist",
+  "name": "Todoist",
+  "domain": "todoist.com",
+  "category": "Productivity"
+ },
+ {
+  "id": "evernote",
+  "name": "Evernote",
+  "domain": "evernote.com",
+  "category": "Productivity"
+ },
+ {
+  "id": "dropbox-paper",
+  "name": "Dropbox Paper",
+  "domain": "paper.dropbox.com",
+  "category": "Productivity"
+ },
+ {
+  "id": "coda",
+  "name": "Coda",
+  "domain": "coda.io",
+  "category": "Productivity"
+ },
+ {
+  "id": "smartsheet",
+  "name": "Smartsheet",
+  "domain": "smartsheet.com",
+  "category": "Project management"
+ },
+ {
+  "id": "wrike",
+  "name": "Wrike",
+  "domain": "wrike.com",
+  "category": "Project management"
+ },
+ {
+  "id": "basecamp",
+  "name": "Basecamp",
+  "domain": "basecamp.com",
+  "category": "Project management"
+ },
+ {
+  "id": "gong",
+  "name": "Gong",
+  "domain": "gong.io",
+  "category": "Sales"
+ },
+ {
+  "id": "outreach",
+  "name": "Outreach",
+  "domain": "outreach.io",
+  "category": "Sales"
+ },
+ {
+  "id": "salesloft",
+  "name": "Salesloft",
+  "domain": "salesloft.com",
+  "category": "Sales"
+ },
+ {
+  "id": "apollo",
+  "name": "Apollo",
+  "domain": "apollo.io",
+  "category": "Sales"
+ },
+ {
+  "id": "gusto",
+  "name": "Gusto",
+  "domain": "gusto.com",
+  "category": "HR"
+ },
+ {
+  "id": "bamboohr",
+  "name": "BambooHR",
+  "domain": "bamboohr.com",
+  "category": "HR"
+ },
+ {
+  "id": "deel",
+  "name": "Deel",
+  "domain": "deel.com",
+  "category": "HR"
+ },
+ {
+  "id": "workday",
+  "name": "Workday",
+  "domain": "workday.com",
+  "category": "HR"
+ },
+ {
+  "id": "okta",
+  "name": "Okta",
+  "domain": "okta.com",
+  "category": "Identity"
+ },
+ {
+  "id": "twitch",
+  "name": "Twitch",
+  "domain": "twitch.tv",
+  "category": "Media"
+ },
+ {
+  "id": "vimeo",
+  "name": "Vimeo",
+  "domain": "vimeo.com",
+  "category": "Media"
+ },
+ {
+  "id": "eventbrite",
+  "name": "Eventbrite",
+  "domain": "eventbrite.com",
+  "category": "Events"
+ },
+ {
+  "id": "amazon-seller-central",
+  "name": "Amazon Seller Central",
+  "domain": "sellercentral.amazon.com",
+  "category": "Commerce"
+ }
+]
