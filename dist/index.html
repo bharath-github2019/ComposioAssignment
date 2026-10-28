@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Approval Path: OAuth app setup guides</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EDF0EE; --sheet:#F8FAF9; --ink:#17262B; --muted:#56676C; --rule:#C8D1CE;
+  --work:#2448C9; --wait:#B7791F; --hard:#A8323A; --easy:#2E7D5B; --mid:#B7791F;
+  --chip:#E1E7E4; --focus:#2448C9;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111B1E; --sheet:#172428; --ink:#E3EAE7; --muted:#9AABA8; --rule:#2F4044;
+    --work:#86A0FF; --wait:#E2A84E; --hard:#EE848A; --easy:#6CC79C; --mid:#E2A84E;
+    --chip:#22343A; --focus:#86A0FF; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111B1E; --sheet:#172428; --ink:#E3EAE7; --muted:#9AABA8; --rule:#2F4044;
+  --work:#86A0FF; --wait:#E2A84E; --hard:#EE848A; --easy:#6CC79C; --mid:#E2A84E;
+  --chip:#22343A; --focus:#86A0FF; color-scheme: dark;
+}
+:root{ box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); }
+*,*::before,*::after{ box-sizing:inherit; }
+html{ scroll-padding-top:env(safe-area-inset-top,0px); }
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size:16px; line-height:1.55; font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased;
+}
+a{ color:var(--work); text-underline-offset:2px; }
+button,input{ font:inherit; color:inherit; }
+:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; border-radius:4px; }
+.wrap{ max-width:1080px; margin:0 auto; padding:28px 20px 80px; }
+.brand{ display:flex; justify-content:space-between; align-items:baseline; gap:16px; margin-bottom:40px; }
+.brand b{ font-weight:700; letter-spacing:-.01em; }
+.brand a{ font-size:14px; }
+.muted{ color:var(--muted); }
+h1,h2,h3{ line-height:1.15; letter-spacing:-.02em; margin:0; }
+
+/* ---------- Home ---------- */
+.ask h1{ font-size:clamp(30px,5vw,52px); font-weight:600; max-width:16ch; }
+.ask p.lede{ max-width:60ch; margin:14px 0 24px; color:var(--muted); font-size:17px; }
+.askform{ display:flex; gap:10px; flex-wrap:wrap; max-width:680px; }
+.askform input{
+  flex:1 1 280px; padding:14px 16px; border:1.5px solid var(--ink); border-radius:10px;
+  background:var(--sheet); font-size:17px;
+}
+.btn{
+  padding:13px 18px; border-radius:10px; border:1.5px solid var(--ink); background:var(--ink); color:var(--paper);
+  font-weight:600; cursor:pointer;
+}
+.btn.ghost{ background:transparent; color:var(--ink); }
+.btn.small{ padding:7px 12px; font-size:14px; border-radius:8px; }
+.btn:disabled{ opacity:.5; cursor:default; }
+.hint{ font-size:14px; color:var(--muted); margin-top:10px; }
+
+.legend{ display:flex; gap:22px; flex-wrap:wrap; font-size:14px; color:var(--muted); margin:48px 0 10px; align-items:center; }
+.sw{ display:inline-block; width:22px; height:10px; border-radius:3px; vertical-align:middle; margin-right:6px; }
+.sw.work{ background:var(--work); }
+.sw.wait{ background:repeating-linear-gradient(135deg,var(--wait) 0 3px,transparent 3px 6px); border:1px solid var(--wait); }
+
+.libhead{ display:flex; justify-content:space-between; align-items:end; gap:16px; flex-wrap:wrap; margin-top:8px; }
+.libhead h2{ font-size:24px; font-weight:600; }
+.tabs{ display:flex; gap:4px; background:var(--chip); padding:4px; border-radius:10px; }
+.tabs button{ border:0; background:transparent; padding:6px 12px; border-radius:7px; cursor:pointer; font-size:14px; }
+.tabs button[aria-pressed="true"]{ background:var(--sheet); font-weight:600; }
+
+.axis{ display:grid; grid-template-columns:minmax(150px,220px) 1fr; gap:16px; font-size:12px; color:var(--muted); margin-top:18px; padding:0 14px; }
+.ticks{ position:relative; height:16px; }
+.ticks span{ position:absolute; transform:translateX(-50%); white-space:nowrap; }
+.ticks span:first-child{ transform:none; }
+.ticks span:last-child{ transform:translateX(-100%); }
+
+.lib{ list-style:none; margin:6px 0 0; padding:0; border-top:1px solid var(--rule); }
+.lib li{ border-bottom:1px solid var(--rule); }
+.row{
+  display:grid; grid-template-columns:minmax(150px,220px) 1fr; gap:16px; align-items:center;
+  padding:14px; width:100%; text-align:left; background:none; border:0; cursor:pointer; border-radius:0;
+}
+.row:hover{ background:var(--sheet); }
+.row .nm{ font-weight:600; font-size:17px; }
+.row .ct{ font-size:13px; color:var(--muted); }
+.row .pending{ font-size:14px; color:var(--muted); }
+.stack{ display:flex; flex-direction:column; gap:5px; }
+.track{ position:relative; height:12px; }
+.track::before{ content:""; position:absolute; left:0; right:0; top:50%; border-top:1px dashed var(--rule); }
+.bar{ position:absolute; top:1px; height:10px; border-radius:3px; }
+.bar.work{ background:var(--work); }
+.bar.wait{ background:repeating-linear-gradient(135deg,var(--wait) 0 3px,transparent 3px 6px); border:1px solid var(--wait); }
+.bar.unknown{ opacity:.55; }
+.bar.zero{ width:3px !important; background:var(--work); }
+
+/* ---------- Guide ---------- */
+.back{ background:none; border:0; padding:0; color:var(--work); cursor:pointer; font-size:15px; text-decoration:underline; text-underline-offset:2px; }
+.gtop{ margin:22px 0 8px; display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; align-items:flex-start; }
+.gtop h1{ font-size:clamp(32px,5vw,48px); font-weight:600; }
+.gmeta{ font-size:14px; color:var(--muted); margin-top:6px; }
+.actions{ display:flex; gap:8px; flex-wrap:wrap; }
+.verdict{ font-size:clamp(19px,2.4vw,23px); line-height:1.4; max-width:62ch; margin:18px 0 28px; font-weight:500; }
+.banner{ border:1.5px solid var(--wait); border-radius:10px; padding:12px 16px; margin:0 0 24px; max-width:78ch; font-size:15px; background:var(--sheet); }
+
+.paths{ background:var(--sheet); border:1px solid var(--rule); border-radius:14px; padding:18px 18px 10px; margin-bottom:36px; }
+.paths h2{ font-size:15px; font-weight:600; margin-bottom:4px; }
+.paths .axis{ padding:0; margin-top:12px; }
+.prow{ display:grid; grid-template-columns:minmax(150px,240px) 1fr; gap:16px; padding:12px 0; border-top:1px solid var(--rule); align-items:start; }
+.prow:first-of-type{ border-top:0; }
+.prow .pn{ font-weight:600; font-size:15px; }
+.prow .pt{ font-size:13px; margin-top:2px; }
+.prow .sum{ font-size:14px; margin-top:6px; color:var(--muted); }
+.tier{ font-weight:600; }
+.tier.easy{ color:var(--easy); } .tier.mid{ color:var(--mid); } .tier.hard{ color:var(--hard); }
+
+.cols{ display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:44px; }
+@media (max-width:880px){ .cols{ grid-template-columns:1fr; gap:28px; } }
+section{ margin-bottom:38px; }
+section > h2{ font-size:21px; font-weight:600; margin-bottom:14px; }
+.items{ list-style:none; padding:0; margin:0; }
+.items li{ padding:10px 0; border-top:1px solid var(--rule); }
+.items li:first-child{ border-top:0; padding-top:0; }
+ol.steps{ list-style:none; counter-reset:s; padding:0; margin:0; }
+ol.steps li{ counter-increment:s; display:grid; grid-template-columns:34px 1fr; gap:10px; padding:14px 0; border-top:1px solid var(--rule); }
+ol.steps li:first-child{ border-top:0; padding-top:0; }
+ol.steps li::before{ content:counter(s); font-weight:700; font-size:20px; line-height:1.2; color:var(--work); }
+.it{ font-weight:600; }
+.id{ margin-top:3px; max-width:68ch; }
+.tags{ display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; font-size:13px; color:var(--muted); align-items:center; }
+.ev{ display:inline-flex; align-items:center; gap:5px; }
+.ev::before{ content:""; width:8px; height:8px; border-radius:50%; background:currentColor; }
+.ev.tested{ color:var(--easy); } .ev.docs{ color:var(--work); } .ev.report{ color:var(--wait); } .ev.model{ color:var(--hard); }
+.who{ border:1px solid var(--rule); border-radius:999px; padding:0 8px; }
+.src{ font-size:13px; }
+.impact-high .it::after{ content:" High impact"; font-weight:500; font-size:12px; color:var(--hard); margin-left:6px; }
+.ifthen dt{ font-weight:600; }
+.ifthen dd{ margin:3px 0 14px; }
+pre{ background:var(--chip); border-radius:10px; padding:14px; overflow-x:auto; font-family:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; font-size:13px; line-height:1.5; }
+
+aside .card{ border:1px solid var(--rule); border-radius:14px; padding:16px 18px; margin-bottom:18px; background:var(--sheet); }
+aside h3{ font-size:16px; font-weight:600; margin-bottom:10px; }
+aside ul{ margin:0; padding-left:18px; }
+aside li{ margin:4px 0; font-size:15px; }
+.split h4{ margin:12px 0 4px; font-size:14px; font-weight:600; }
+.split h4:first-child{ margin-top:0; }
+.evsum{ display:grid; grid-template-columns:auto 1fr; gap:4px 10px; font-size:14px; }
+.evsum b{ text-align:right; }
+.srclist{ list-style:none; padding:0 !important; }
+.srclist li{ padding:6px 0; border-top:1px solid var(--rule); font-size:14px; }
+.srclist li:first-child{ border-top:0; }
+.kind{ font-size:12px; color:var(--muted); display:block; }
+
+/* ---------- Generation ---------- */
+.gen{ background:var(--sheet); border:1px solid var(--rule); border-radius:14px; padding:22px; max-width:720px; margin-top:24px; }
+.gen h2{ font-size:22px; font-weight:600; }
+.stages{ list-style:none; padding:0; margin:18px 0 0; }
+.stages li{ display:grid; grid-template-columns:22px 1fr; gap:10px; padding:10px 0; border-top:1px solid var(--rule); }
+.stages li:first-child{ border-top:0; }
+.dot{ width:12px; height:12px; border-radius:50%; border:2px solid var(--rule); margin-top:6px; }
+.dot.run{ border-color:var(--work); border-top-color:transparent; animation:spin .9s linear infinite; }
+.dot.done{ background:var(--easy); border-color:var(--easy); }
+.dot.fail{ background:var(--hard); border-color:var(--hard); }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+@media (prefers-reduced-motion: reduce){ .dot.run{ animation:none; background:var(--work); } }
+.stages .sn{ font-weight:600; }
+.stages .sd{ font-size:14px; color:var(--muted); }
+.err{ color:var(--hard); margin-top:12px; }
+.toast{ position:fixed; left:50%; bottom:calc(20px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%); background:var(--ink); color:var(--paper); padding:10px 16px; border-radius:10px; font-size:14px; z-index:20; }
+.foot{ margin-top:60px; font-size:14px; color:var(--muted); max-width:75ch; }
+@media (max-width:620px){
+  .row,.axis,.prow{ grid-template-columns:1fr; gap:6px; }
+  .axis > div:first-child{ display:none; }
+  .ticks span:nth-child(5){ display:none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="brand">
+    <b>Approval Path</b>
+    <a href="#" id="homeLink">All guides</a>
+  </header>
+  <main id="app" aria-live="polite"></main>
+</div>
+<div id="toast" class="toast" hidden></div>
+
+<script>
+const LIBRARY = [{"id":"github","name":"GitHub","domain":"github.com","category":"Developer tools","checked":"2026-10-28","mode":"verified","headline":"Register in minutes with no review. The surprise comes later: each customer organization has to approve your app before it can see their org's data.","startUrl":"https://github.com/settings/developers","paths":[{"name":"OAuth app, personal repos","tier":"self-serve","hands":[5,15],"wait":[0,0],"note":"No GitHub review at any point."},{"name":"Access to a customer's organization","tier":"customer-approval","hands":[5,15],"wait":[0,4320],"waitUnknown":true,"note":"Wait depends on each customer's org owner approving the app."}],"prereqs":[{"t":"A GitHub account, or admin rights on the GitHub organization that should own the app.","ev":"docs","src":["gh-create"]},{"t":"A public homepage URL for your product.","ev":"docs","src":["gh-create"]},{"t":"The exact callback URL from your integration platform (in Composio, it is shown on the auth config).","ev":"docs","src":["composio-wl"]}],"steps":[{"t":"Open Developer settings","d":"Sign in, then go to Settings, Developer settings, OAuth Apps. Register under your organization rather than a personal account so the app survives staff changes.","who":"you","ev":"tested","src":["gh-create","probe-gh"]},{"t":"Fill in the app details","d":"Application name and homepage are shown to users on the consent screen. Only use information you consider public; avoid internal URLs.","who":"both","ev":"docs","src":["gh-create"]},{"t":"Set the one callback URL","d":"An OAuth app accepts a single authorization callback URL. Create separate apps for development and production instead of swapping the URL.","who":"both","ev":"docs","src":["gh-create","weweb-gh"]},{"t":"Generate a client secret","d":"After registering, generate a client secret and copy it straight into your secrets manager or integration platform. It is shown once.","who":"you","ev":"model","src":[]},{"t":"Connect it to your integration","d":"Paste the client ID and secret into your auth config. Only new connections use your app; existing users keep refreshing through the previous credentials until they reconnect.","who":"you","ev":"docs","src":["composio-wl-2"]}],"nuances":[{"t":"Organizations must approve OAuth apps","d":"OAuth apps need organization approval by default and cannot be approved per repository. A user in a restricted org can sign in, but org data stays hidden until an owner approves. Tell customers how to request access in your onboarding.","impact":"high","ev":"docs","src":["gh-limit"]},{"t":"OAuth app or GitHub App","d":"GitHub Apps allow up to 10 callback URLs and finer-grained permissions. If your platform supports GitHub Apps, compare before committing; this guide covers the OAuth app most integration platforms ask for.","impact":"medium","ev":"docs","src":["gh-callback"]},{"t":"Scopes are coarse","d":"Classic OAuth scopes such as repo grant broad access to private repositories. Users and security reviewers may push back; request the narrowest scope that works.","impact":"medium","ev":"model","src":[]}],"blockers":[{"if":"A user connects but sees none of their organization's repositories","then":"The org has OAuth app access restrictions. The user requests access from the authorization screen and an org owner approves it in the org's settings."},{"if":"You need different callback URLs per environment","then":"Register one OAuth app per environment, or move to a GitHub App, which supports multiple callback URLs."}],"agent":{"can":["Draft the app name and description","Work out the callback URL from your integration platform","Open the exact registration page","Check the finished config against this guide"],"you":["Sign in to GitHub (agents cannot pass the login wall)","Click Register and generate the secret","Store the secret safely","Ask customer org owners to approve the app"]},"tested":[{"what":"Requested github.com/settings/applications/new and /settings/developers without an account","result":"Both return 302 to the GitHub sign-in page. The registration form cannot be reached unauthenticated, so field-level steps rely on GitHub's docs.","date":"2026-10-28"}],"uncertain":["How long customer org approval takes varies by customer; GitHub imposes no wait of its own.","Whether your integration platform supports GitHub Apps instead of OAuth apps."],"sources":[{"id":"gh-create","title":"GitHub Docs: Creating an OAuth app","url":"https://docs.github.com/en/enterprise-server@3.1/apps/building-oauth-apps/creating-an-oauth-app","kind":"official"},{"id":"gh-limit","title":"GitHub Docs: Limiting OAuth app and GitHub App access requests","url":"https://docs.github.com/en/organizations/managing-programmatic-access-to-your-organization/limiting-oauth-app-and-github-app-access-requests-and-installations","kind":"official"},{"id":"gh-callback","title":"GitHub Docs: About the user authorization callback URL","url":"https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/about-the-user-authorization-callback-url","kind":"official"},{"id":"weweb-gh","title":"WeWeb: GitHub provider setup (one callback URL per app)","url":"https://docs.weweb.io/database-and-apis/auth/providers/github.html","kind":"third-party"},{"id":"composio-wl","title":"Composio Docs: White-labeling authentication","url":"https://docs.composio.dev/docs/guides/white-labeling-authentication","kind":"official"},{"id":"composio-wl-2","title":"Composio Docs: Switching to your own OAuth app","url":"https://docs-2gqx4xowi.preview.composio.dev/docs/white-labeling-authentication","kind":"official"},{"id":"probe-gh","title":"Agent probe: unauthenticated request to the registration page","url":"https://github.com/settings/applications/new","kind":"probe"}]},{"id":"slack","name":"Slack","domain":"slack.com","category":"Communication","checked":"2026-10-28","mode":"verified","headline":"Creating the app takes under an hour. Selling it to other companies is the hard part: Slack's terms route commercial distribution through Marketplace review, and unlisted apps get a 1 request per minute limit on reading messages.","startUrl":"https://api.slack.com/apps","paths":[{"name":"Internal app for your own workspace","tier":"self-serve","hands":[20,60],"wait":[0,0],"note":"Internal customer-built apps keep standard rate limits."},{"name":"Unlisted app installed by customers","tier":"restricted","hands":[30,90],"wait":[0,0],"note":"Works immediately, but message-history reads are throttled and the terms point commercial apps to the Marketplace."},{"name":"Slack Marketplace listing","tier":"review-required","hands":[480,1440],"wait":[10080,60480],"waitUnknown":true,"note":"Needs 10 active workspace installs before you can submit. Slack publishes no review SLA."}],"prereqs":[{"t":"A Slack workspace where you can install apps, for testing.","ev":"model","src":[]},{"t":"An HTTPS redirect URL (your integration platform's callback).","ev":"model","src":[]},{"t":"For the Marketplace: at least 10 installations on active workspaces before you submit.","ev":"docs","src":["slack-changelog"]}],"steps":[{"t":"Create the app from a manifest","d":"At api.slack.com/apps choose Create New App, then From a manifest. Paste the manifest below, which sets the name, redirect URL and scopes in one go.","who":"both","ev":"model","src":[]},{"t":"Check OAuth and permissions","d":"Confirm the redirect URL and scopes under OAuth & Permissions. Ask only for scopes you use; reviewers check this.","who":"you","ev":"model","src":[]},{"t":"Install to your own workspace and test","d":"Install, complete a real OAuth connection through your integration, and call one API method.","who":"you","ev":"model","src":[]},{"t":"Activate public distribution","d":"Under Manage Distribution, work through Slack's checklist and activate public distribution so other workspaces can install the app.","who":"you","ev":"model","src":[]},{"t":"Decide on the Marketplace","d":"If you charge customers and read message history, plan the Marketplace submission early. You need 10 active installs first, so recruit design partners.","who":"you","ev":"docs","src":["slack-changelog","slack-rl-faq"]}],"snippet":{"label":"App manifest your agent can generate","lang":"yaml","code":"display_information:\n  name: Acme Agent\noauth_config:\n  redirect_urls:\n    - https://YOUR-CALLBACK-URL\n  scopes:\n    bot:\n      - channels:read\n      - chat:write\nsettings:\n  org_deploy_enabled: false\n  socket_mode_enabled: false"},"nuances":[{"t":"Reading history is throttled for unlisted apps","d":"For commercially distributed apps outside the Marketplace, conversations.history and conversations.replies are limited to 1 request per minute, with the page size cut to 15 objects. This hit new apps from May 29, 2025 and existing installs from March 3, 2026. An agent that summarizes channels will feel this immediately.","impact":"high","ev":"docs","src":["slack-rl-changelog","slack-rl-ja","slack-changelog"]},{"t":"The terms point commercial apps to the Marketplace","d":"Slack's updated API terms say the Marketplace is the only appropriate channel for commercially distributing apps, including unlisted ones.","impact":"high","ev":"docs","src":["slack-changelog"]},{"t":"Internal apps are unaffected","d":"Apps a customer builds for their own workspace keep their existing rate limits.","impact":"low","ev":"docs","src":["slack-changelog"]},{"t":"Classic apps are being retired","d":"If you are reusing an old classic app, Slack's deprecation date is November 16, 2026. Create a new app instead.","impact":"medium","ev":"docs","src":["slack-changelog"]}],"blockers":[{"if":"Your agent returns only 15 messages and hits 429 errors","then":"You are on the non-Marketplace limit. Cache aggressively, backfill slowly using the Retry-After header, and start the Marketplace path."},{"if":"You cannot reach 10 active installs for the Marketplace","then":"Ship as unlisted to design partners first, within the rate limits, and submit once you have the installs."}],"agent":{"can":["Generate the app manifest with the right scopes and redirect URL","Pick the minimum scopes from your feature list","Draft Marketplace listing copy and scope justifications","Flag API calls that the rate limit will affect"],"you":["Sign in and create the app","Install it to a workspace and test","Activate distribution","Recruit the first 10 installs and submit to the Marketplace"]},"tested":[{"what":"Attempted to reach api.slack.com/apps from the agent environment","result":"Not reachable from the sandbox (network allowlist). Setup steps rely on Slack's docs and are marked accordingly.","date":"2026-10-28"}],"uncertain":["Marketplace review time. Slack does not publish one; the range shown is a planning estimate, not a sourced figure.","Slack's changelog says the 10-install entry requirement is changing. Check the current Marketplace guidelines before you plan around it.","Exact wording of the Manage Distribution checklist (not verified first-hand)."],"sources":[{"id":"slack-rl-changelog","title":"Slack changelog: Rate limit changes for non-Marketplace apps","url":"https://docs.slack.dev/changelog/2025/05/29/rate-limit-changes-for-non-marketplace-apps","kind":"official"},{"id":"slack-rl-ja","title":"Slack docs (JA): rate limit FAQ, including the 15-object limit","url":"https://docs.slack.dev/ja-jp/2025-05-terms-rate-limit-update-and-faq","kind":"official"},{"id":"slack-rl-faq","title":"Slack: Terms and rate limit update FAQ","url":"https://api.slack.com/changelog/2025-05-terms-rate-limit-update-and-faq","kind":"official"},{"id":"slack-changelog","title":"Slack developer changelog (terms, March 2026 rollout, Marketplace entry)","url":"https://api.slack.com/changelog/slack-connect-api-2025","kind":"official"},{"id":"slack-rl","title":"Slack docs: Web API rate limits","url":"https://docs.slack.dev/apis/web-api/rate-limits","kind":"official"}]},{"id":"gmail","name":"Gmail (Google)","domain":"mail.google.com","category":"Email","checked":"2026-10-28","mode":"verified","headline":"The OAuth client takes 20 minutes. Reading email is the longest path in this library: Google verification plus an annual third-party security assessment, usually weeks and not free.","startUrl":"https://console.cloud.google.com/apis/credentials","paths":[{"name":"Testing mode (up to 100 test users)","tier":"self-serve","hands":[20,45],"wait":[0,0],"note":"Refresh tokens expire after 7 days. Fine for demos, breaks production sync."},{"name":"Send only (gmail.send, a sensitive scope)","tier":"review-required","hands":[180,480],"wait":[4320,20160],"waitUnknown":true,"note":"Verification and a demo video, but no security assessment."},{"name":"Read or modify mail (restricted scopes)","tier":"gated","hands":[960,2880],"wait":[14400,86400],"note":"Verification plus a CASA security assessment, renewed every year."}],"prereqs":[{"t":"A Google Cloud project with the Gmail API enabled.","ev":"report","src":["unified-gmail"]},{"t":"A public homepage and privacy policy on a domain you own.","ev":"model","src":[]},{"t":"A demo video showing how you use each sensitive or restricted scope.","ev":"report","src":["nylas"]},{"t":"For restricted scopes: your product must fit one of Google's permitted Gmail application types.","ev":"report","src":["unified-gmail"]},{"t":"For restricted scopes: budget for a CASA assessment from a Google-approved lab.","ev":"report","src":["nango"]}],"steps":[{"t":"Choose your scopes first","d":"This decides the whole timeline. Every Gmail read scope, including gmail.readonly, is restricted. gmail.send is only sensitive. If your agent only sends mail, stop at gmail.send.","who":"agent","ev":"report","src":["unified-gmail"]},{"t":"Create the project and enable the Gmail API","d":"In Google Cloud console, create a project for production (separate from dev) and enable the Gmail API.","who":"you","ev":"report","src":["unified-gmail"]},{"t":"Configure branding and audience","d":"Set the app name, logo, support email, homepage and privacy policy. Choose External unless only your own Workspace users will connect.","who":"both","ev":"model","src":[]},{"t":"Create the OAuth client","d":"Create a Web application client and add your integration platform's redirect URI exactly.","who":"you","ev":"model","src":[]},{"t":"Test with up to 100 test users","d":"Add test users and run real connections. Expect refresh tokens to expire after 7 days in this mode.","who":"you","ev":"report","src":["nylas","nango"]},{"t":"Submit for verification","d":"Submit scope justifications and the demo video. For restricted scopes, start the CASA assessment with an approved lab in parallel.","who":"both","ev":"report","src":["nango","nylas"]},{"t":"Plan the annual renewal","d":"Restricted-scope verification and CASA must be renewed every year. Put the date on a calendar.","who":"you","ev":"report","src":["nango"]}],"nuances":[{"t":"Testing mode breaks after a week","d":"External apps in Testing get refresh tokens that expire after 7 days, so a connection that works on Monday stops syncing the next week.","impact":"high","ev":"report","src":["nylas","nango"]},{"t":"100-user ceiling before review","d":"Until verified, only 100 users can ever authorize the app. Spend them on real testers, not on your team's repeated logins.","impact":"high","ev":"report","src":["nango"]},{"t":"Password changes revoke Gmail tokens","d":"When a user changes their Google password, refresh tokens with Gmail scopes are invalidated. Build a reconnect prompt.","impact":"medium","ev":"report","src":["unified-gmail"]},{"t":"Internal apps skip verification","d":"If only users in your own Google Workspace organization connect, an Internal app avoids verification entirely.","impact":"medium","ev":"report","src":["nylas"]},{"t":"gmail.compose is restricted","d":"Drafting is restricted even though sending is not. Scope names are a poor guide to risk tier; check Google's list.","impact":"medium","ev":"report","src":["unified-gmail"]}],"blockers":[{"if":"Users see access_denied","then":"The user is not on the test user list, or you requested a restricted scope that is not yet verified."},{"if":"Verification asks for changes to your privacy policy","then":"Google expects the policy to describe exactly how Gmail data is used, stored and shared. Your agent can draft the section; legal should approve it."},{"if":"CASA finds vulnerabilities","then":"Fix and rescan. Running a static scan before engaging a lab avoids most first-round failures."}],"agent":{"can":["Map your features to the narrowest scope set and its tier","Draft scope justifications and the privacy policy section on Gmail data","Write a script and shot list for the demo video","Pre-check your app with a static security scan before CASA"],"you":["Create the project and OAuth client in Google Cloud","Verify domain ownership","Record the demo video","Pay for and complete the CASA assessment","Submit and answer reviewer emails"]},"tested":[{"what":"Attempted to reach console.cloud.google.com from the agent environment","result":"Not reachable from the sandbox. Guidance draws on Google support pages and integration-vendor runbooks (Nango, Nylas, Unified), labeled per claim.","date":"2026-10-28"}],"uncertain":["Total wait. Nango reports CASA Tier 2 can finish in about 5 days and suggests budgeting 10 to 20; Google says it can take several weeks or longer. The range shown spans both.","CASA cost varies by lab and tier; no reliable figure was found.","Wait for sensitive-only verification is an estimate, not a sourced figure."],"sources":[{"id":"nango","title":"Nango: Google security review guide","url":"https://nango.dev/docs/integrations/google-security-review","kind":"third-party"},{"id":"nylas","title":"Nylas: Fix Google access_denied (testing mode, restricted scopes)","url":"https://developer.nylas.com/docs/cookbook/use-cases/build/fix-google-access-denied/","kind":"third-party"},{"id":"unified-gmail","title":"Unified.to: Gmail OAuth app runbook (scope tiers)","url":"https://docs.unified.to/skills/gmail-oauth-app/SKILL.md","kind":"third-party"},{"id":"google-restricted","title":"Google Cloud Help: Restricted scope verification (linked from Nango; not fetched in this check)","url":"https://support.google.com/cloud/answer/13464325?hl=en","kind":"official"},{"id":"google-annual","title":"Google Cloud Help: Annual recertification (linked from Nango; not fetched in this check)","url":"https://support.google.com/cloud/answer/13463816?hl=en","kind":"official"}]},{"id":"linkedin","name":"LinkedIn","domain":"linkedin.com","category":"Social","checked":"2026-10-28","mode":"verified","headline":"Sign-in and posting as a member are instant checkboxes. Anything involving company pages is a separate product, a separate app, and a review queue.","startUrl":"https://www.linkedin.com/developers/apps","paths":[{"name":"Sign in and post as the member","tier":"self-serve","hands":[15,30],"wait":[0,0],"note":"OpenID Connect plus Share on LinkedIn, granted instantly."},{"name":"Manage company pages (Community Management API)","tier":"review-required","hands":[120,360],"wait":[4320,36000],"note":"Development tier, then Standard tier with a screencast. Needs its own app."}],"prereqs":[{"t":"A LinkedIn Company Page you administer. Every app must be associated with one.","ev":"report","src":["devto-li","artifism-li"]},{"t":"The page admin available to approve the verification link.","ev":"report","src":["artifism-li"]},{"t":"An app logo and your redirect URL.","ev":"report","src":["serval-li"]}],"steps":[{"t":"Create the app","d":"At linkedin.com/developers/apps, create an app, associate your Company Page, upload a logo and accept the terms.","who":"you","ev":"report","src":["serval-li","n8n-li"]},{"t":"Verify the page association","d":"Generate the verification URL in app settings and have a page admin open it. The app does nothing until it shows Verified.","who":"you","ev":"report","src":["artifism-li","devto-li"]},{"t":"Add the self-serve products","d":"On the Products tab, add Sign In with LinkedIn using OpenID Connect (openid, profile, email) and Share on LinkedIn (w_member_social).","who":"you","ev":"report","src":["upload-post-li","devto-li"]},{"t":"Add the redirect URL and copy credentials","d":"On the Auth tab, add your platform's redirect URL and copy the client ID and secret into your auth config.","who":"you","ev":"report","src":["serval-li"]},{"t":"For company pages, create a second app","d":"Community Management API cannot share an app with other products. Create a dedicated app and apply; expect a Development tier first and a Standard tier review with a screencast.","who":"both","ev":"report","src":["devto-li","upload-post-li"]}],"nuances":[{"t":"Company page features need a separate app","d":"If you add Community Management API to the same app as sign-in, you will have to split them. Plan two apps from the start.","impact":"high","ev":"report","src":["devto-li","upload-post-li"]},{"t":"Don't use a placeholder page","d":"LinkedIn gates several products on a verified Company Page. Attach your real company page, not a throwaway.","impact":"medium","ev":"report","src":["serval-li"]},{"t":"Sign In with LinkedIn is not identity verification","d":"It proves account control, not that the person is who their profile says.","impact":"low","ev":"report","src":["upload-post-li"]}],"blockers":[{"if":"The app shows Unverified","then":"The page association has not been approved. Send the verification URL to a page admin."},{"if":"You get unauthorized_scope_error for organization scopes","then":"Those need Community Management API on a dedicated app, approved through review."}],"agent":{"can":["Tell you which products your features need, and whether you need one app or two","Draft the Community Management API application and screencast script","Check that requested scopes match the added products"],"you":["Create the app while signed in","Get a page admin to approve verification","Submit the Community Management API application"]},"tested":[{"what":"Attempted to reach linkedin.com/developers/apps from the agent environment","result":"Not reachable from the sandbox. A third-party developer reported completing the self-serve path end to end in about 15 minutes in 2026.","date":"2026-10-28"}],"uncertain":["Community Management API review time. Sources range from several days to 20 to 25 days.","LinkedIn's official Learn docs were not fetched directly in this check; most step details come from integration vendors' setup guides."],"sources":[{"id":"devto-li","title":"DEV Community: LinkedIn OAuth walkthrough tested in 2026","url":"https://dev.to/broke2builtai/how-to-post-to-linkedin-from-a-script-the-15-minute-oauth-walkthrough-2026-58fp","kind":"third-party"},{"id":"upload-post-li","title":"Upload-Post: LinkedIn API developer guide","url":"https://www.upload-post.com/linkedin-api/","kind":"third-party"},{"id":"serval-li","title":"Serval: LinkedIn integration setup","url":"https://docs.serval.com/sections/integrations/linkedin","kind":"third-party"},{"id":"artifism-li","title":"Artifism: LinkedIn developer app setup (page verification)","url":"https://docs.artifism.techvill.net/customer/linkedin-api-setup","kind":"third-party"},{"id":"n8n-li","title":"n8n Docs: LinkedIn credentials","url":"https://docs.n8n.io/credentials/linkedin/","kind":"third-party"},{"id":"li-cm","title":"Microsoft Learn: Community Management API overview","url":"https://learn.microsoft.com/en-us/linkedin/marketing/community-management/community-management-overview","kind":"official"}]},{"id":"salesforce","name":"Salesforce","domain":"salesforce.com","category":"CRM","checked":"2026-10-28","mode":"verified","headline":"Most tutorials online are now wrong. New Connected Apps are disabled by default since Spring '26, and customer orgs block uninstalled apps, so plan for an External Client App that each customer's admin installs.","startUrl":"https://developer.salesforce.com","paths":[{"name":"External Client App in your own org","tier":"self-serve","hands":[60,180],"wait":[0,0],"note":"Works for your org. Reaching customer orgs needs more (below)."},{"name":"Customers connect their own orgs","tier":"customer-approval","hands":[240,960],"wait":[0,10080],"waitUnknown":true,"note":"Package the app and have each customer admin install it."}],"prereqs":[{"t":"A Salesforce org you control, such as a free Developer Edition org.","ev":"model","src":[]},{"t":"Admin access in that org.","ev":"docs","src":["sf-cli"]},{"t":"To reach customer orgs: a packaging setup (second-generation packaging) and customer admins willing to install.","ev":"report","src":["paragon-sf"]}],"steps":[{"t":"Create an External Client App, not a Connected App","d":"From Setup, open External Client App Manager and create a new app. Connected App creation is disabled by default and needs Salesforce Support to re-enable.","who":"you","ev":"docs","src":["sf-mobile","sf-cli"]},{"t":"Enable OAuth and set the callback","d":"Enable OAuth, add your platform's callback URL and select scopes (typically api and refresh_token).","who":"both","ev":"model","src":[]},{"t":"Copy the consumer key and secret","d":"Paste them into your auth config. Use the web server flow; External Client Apps do not support the username-password flow.","who":"you","ev":"report","src":["striim-sf"]},{"t":"Package it for customers","d":"Add the app to a second-generation package so customer orgs can install it, and give customers install instructions.","who":"both","ev":"report","src":["paragon-sf"]},{"t":"Have each customer admin install it","d":"Since September 2025, users are blocked from authorizing uninstalled connected apps unless an admin installs the app or grants a bypass permission.","who":"you","ev":"report","src":["searchunify-sf","workspan-sf"]}],"nuances":[{"t":"Connected Apps are being retired","d":"Creation of new Connected Apps is restricted as of Spring '26. Existing ones keep working; new integrations should use External Client Apps.","impact":"high","ev":"docs","src":["sf-mobile","sf-cli"]},{"t":"Uninstalled apps are blocked for new users","d":"New users cannot authorize an uninstalled connected app unless they hold Approve Uninstalled Connected Apps or Use Any API Client. Expect support tickets from customers who skip the install step.","impact":"high","ev":"report","src":["searchunify-sf","workspan-sf","paragon-sf"]},{"t":"No username-password flow","d":"External Client Apps drop the username-password OAuth flow some older scripts relied on.","impact":"medium","ev":"report","src":["striim-sf"]},{"t":"Sandbox refreshes lose local apps","d":"Local External Client Apps are not copied when a sandbox is cloned or refreshed; only packaged ones are.","impact":"low","ev":"report","src":["striim-sf"]}],"blockers":[{"if":"There is no New Connected App button","then":"Expected since Spring '26. Use External Client App Manager, or ask Salesforce Support to re-enable Connected Apps if you truly need one."},{"if":"Customer users get blocked when connecting","then":"Their admin must install the app (Setup, Connected Apps OAuth Usage, Install) or grant the bypass permission to specific users."}],"agent":{"can":["Spot outdated Connected App instructions in your docs","Draft the customer admin install guide","Generate packaging metadata for the app","Pick the right OAuth flow for your use case"],"you":["Create the org and the External Client App","Set up packaging and a Dev Hub","Coordinate installs with each customer admin"]},"tested":[{"what":"Attempted to reach Salesforce setup pages from the agent environment","result":"Not reachable from the sandbox. Guidance draws on Salesforce developer docs and vendor migration notes.","date":"2026-10-28"}],"uncertain":["Whether an unpackaged External Client App can serve users in other orgs. Vendor notes imply packaging is required; Salesforce's own wording was not confirmed directly.","AppExchange security review timing, if you choose to list. Not researched in this pass."],"sources":[{"id":"sf-mobile","title":"Salesforce Developers: Connected Apps (creation restricted as of Spring '26)","url":"https://developer.salesforce.com/docs/atlas.en-us.pkg1_dev.meta/pkg2_dev/connected_apps.htm","kind":"official"},{"id":"sf-cli","title":"Salesforce Developers: Create a Connected App in your org (CLI guide)","url":"https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_connected_app.htm","kind":"official"},{"id":"striim-sf","title":"Striim: Salesforce Connected Apps and External Client Apps","url":"https://striim.com/docs/en/salesforce-connected-apps-and-external-client-apps.html","kind":"third-party"},{"id":"paragon-sf","title":"Paragon: Salesforce Connected App changes","url":"https://www.useparagon.com/blog/salesforce-connected-app-changes","kind":"third-party"},{"id":"searchunify-sf","title":"SearchUnify: Connected App usage restrictions timeline","url":"https://community.searchunify.com/hc/en-us/community/posts/30013945194525-Salesforce-Connected-App-Usage-Restrictions-Are-Coming","kind":"third-party"},{"id":"workspan-sf","title":"WorkSpan: Connected App usage restrictions","url":"https://support.workspan.com/hc/en-us/articles/44432397224851","kind":"third-party"}]},{"id":"x","name":"X (Twitter)","domain":"x.com","category":"Social","checked":"2026-10-28","mode":"verified","headline":"No review queue, but no free lunch: since February 2026 every new developer pays per request, and X's terms point commercial products to an Enterprise contract.","startUrl":"https://developer.x.com","paths":[{"name":"Pay-per-use app","tier":"paid","hands":[20,45],"wait":[0,0],"note":"Buy credits before your first call. Reads capped at 2 million posts a month."},{"name":"Commercial product at scale","tier":"gated","hands":[120,480],"wait":[10080,60480],"waitUnknown":true,"note":"Enterprise plan, negotiated with X sales."}],"prereqs":[{"t":"An X developer account, with a description of your use case.","ev":"report","src":["singh-x"]},{"t":"A payment method and prepaid credits.","ev":"report","src":["gigazine-x","postproxy-x"]},{"t":"Your callback URL and a website URL.","ev":"model","src":[]}],"steps":[{"t":"Create the developer account","d":"Sign up at developer.x.com and describe your use case. New accounts start on pay-per-use.","who":"you","ev":"report","src":["singh-x","postproxy-x"]},{"t":"Create a project and app","d":"In the Developer Console, create the app that will hold your OAuth credentials.","who":"you","ev":"model","src":[]},{"t":"Turn on OAuth 2.0","d":"In user authentication settings, enable OAuth 2.0 as a web app (confidential client), and add the callback and website URLs.","who":"both","ev":"model","src":[]},{"t":"Choose scopes","d":"Typical agent scopes are tweet.read, users.read and tweet.write; add offline.access to get refresh tokens.","who":"agent","ev":"model","src":[]},{"t":"Buy credits and set a spend limit","d":"Load credits in the Developer Console and set limits before connecting users, so a runaway loop drains a capped balance rather than your card.","who":"you","ev":"report","src":["singh-x"]}],"nuances":[{"t":"The free tier is gone for new developers","d":"On February 6, 2026, X made pay-per-use the default for new developers. Price varies by endpoint; check the Developer Console for current rates.","impact":"high","ev":"report","src":["postproxy-x","singh-x","gigazine-x"]},{"t":"Self-serve is meant for limited use","d":"Per an Open Terms Archive memo on X's developer terms, self-serve use targets prototypes and apps with a limited number of end users; commercial use still requires the Enterprise plan. Read the current terms before launching to customers.","impact":"high","ev":"report","src":["ota-x"]},{"t":"Read cap","d":"Pay-per-use reads are capped at 2 million posts per month before Enterprise is needed.","impact":"medium","ev":"report","src":["postproxy-x","opentweet-x"]},{"t":"Every user's agent actions cost you","d":"Each call your users' agents make spends your credits. Model per-user cost before pricing your product.","impact":"medium","ev":"model","src":[]}],"blockers":[{"if":"Calls fail with a payment or credits error","then":"Your balance is empty. Top up, and turn on auto-recharge with a cap."},{"if":"Your product is commercial with many end users","then":"Contact X about Enterprise before launch; plan the timeline around a sales conversation."}],"agent":{"can":["Estimate monthly API cost from your expected usage","Pick scopes and the OAuth 2.0 client type","Draft the use case description","Summarize current developer terms for your use case"],"you":["Create the developer account and app","Add payment and set spend limits","Decide whether you need Enterprise, and talk to X"]},"tested":[{"what":"Attempted to reach developer.x.com from the agent environment","result":"Not reachable from the sandbox. No official X page was fetched in this check; claims are from secondary reports and labeled so.","date":"2026-10-28"}],"uncertain":["Exact per-request prices. Third-party reports cite about $0.01 per post created and $0.005 per post read; X shows current prices in the console.","Whether X still reviews developer account use cases before granting access.","Enterprise timeline and cost; not publicly documented."],"sources":[{"id":"postproxy-x","title":"PostProxy: X API pricing in 2026","url":"https://www.postproxy.dev/blog/x-api-pricing-2026/","kind":"third-party"},{"id":"singh-x","title":"X API developer account approval and pay-per-use (2026)","url":"https://singhamandeep.com/?p=1353","kind":"third-party"},{"id":"gigazine-x","title":"GIGAZINE: X announces pay-as-you-go API pricing","url":"https://gigazine.net/gsc_news/en/20260209-x-api-pay-per-use","kind":"third-party"},{"id":"ota-x","title":"Open Terms Archive: X replaces its $200 plan with pay-per-use","url":"https://opentermsarchive.org/en/memos/x-replaces-its-dollar200-entry-level-api-plan-with-a-pay-per-use-model/","kind":"third-party"},{"id":"opentweet-x","title":"OpenTweet: X API pay-per-use explained","url":"https://opentweet.io/how-to/x-api-pay-per-use-explained","kind":"third-party"},{"id":"x-pricing","title":"X Developer Platform: Pricing","url":"https://docs.x.com/x-api/getting-started/pricing","kind":"official"}]}];
+const CATALOG = [{"id":"github","name":"GitHub","domain":"github.com","category":"Developer tools"},{"id":"slack","name":"Slack","domain":"slack.com","category":"Communication"},{"id":"gmail","name":"Gmail (Google)","domain":"mail.google.com","category":"Email"},{"id":"linkedin","name":"LinkedIn","domain":"linkedin.com","category":"Social"},{"id":"salesforce","name":"Salesforce","domain":"salesforce.com","category":"CRM"},{"id":"x","name":"X (Twitter)","domain":"x.com","category":"Social"},{"id":"google-calendar","name":"Google Calendar","domain":"calendar.google.com","category":"Calendar"},{"id":"google-drive","name":"Google Drive","domain":"drive.google.com","category":"Files"},{"id":"google-sheets","name":"Google Sheets","domain":"sheets.google.com","category":"Productivity"},{"id":"google-docs","name":"Google Docs","domain":"docs.google.com","category":"Productivity"},{"id":"youtube","name":"YouTube","domain":"youtube.com","category":"Social"},{"id":"microsoft-outlook","name":"Microsoft Outlook","domain":"outlook.com","category":"Email"},{"id":"microsoft-teams","name":"Microsoft Teams","domain":"teams.microsoft.com","category":"Communication"},{"id":"onedrive","name":"OneDrive","domain":"onedrive.com","category":"Files"},{"id":"sharepoint","name":"SharePoint","domain":"sharepoint.com","category":"Files"},{"id":"microsoft-excel-graph","name":"Microsoft Excel (Graph)","domain":"microsoft.com","category":"Productivity"},{"id":"notion","name":"Notion","domain":"notion.so","category":"Productivity"},{"id":"linear","name":"Linear","domain":"linear.app","category":"Project management"},{"id":"jira","name":"Jira","domain":"atlassian.com","category":"Project management"},{"id":"confluence","name":"Confluence","domain":"atlassian.com","category":"Knowledge base"},{"id":"asana","name":"Asana","domain":"asana.com","category":"Project management"},{"id":"trello","name":"Trello","domain":"trello.com","category":"Project management"},{"id":"clickup","name":"ClickUp","domain":"clickup.com","category":"Project management"},{"id":"monday-com","name":"Monday.com","domain":"monday.com","category":"Project management"},{"id":"airtable","name":"Airtable","domain":"airtable.com","category":"Database"},{"id":"hubspot","name":"HubSpot","domain":"hubspot.com","category":"CRM"},{"id":"pipedrive","name":"Pipedrive","domain":"pipedrive.com","category":"CRM"},{"id":"zoho-crm","name":"Zoho CRM","domain":"zoho.com","category":"CRM"},{"id":"attio","name":"Attio","domain":"attio.com","category":"CRM"},{"id":"close","name":"Close","domain":"close.com","category":"CRM"},{"id":"intercom","name":"Intercom","domain":"intercom.com","category":"Support"},{"id":"zendesk","name":"Zendesk","domain":"zendesk.com","category":"Support"},{"id":"freshdesk","name":"Freshdesk","domain":"freshdesk.com","category":"Support"},{"id":"help-scout","name":"Help Scout","domain":"helpscout.com","category":"Support"},{"id":"front","name":"Front","domain":"front.com","category":"Support"},{"id":"discord","name":"Discord","domain":"discord.com","category":"Communication"},{"id":"zoom","name":"Zoom","domain":"zoom.us","category":"Meetings"},{"id":"calendly","name":"Calendly","domain":"calendly.com","category":"Calendar"},{"id":"cal-com","name":"Cal.com","domain":"cal.com","category":"Calendar"},{"id":"dropbox","name":"Dropbox","domain":"dropbox.com","category":"Files"},{"id":"box","name":"Box","domain":"box.com","category":"Files"},{"id":"figma","name":"Figma","domain":"figma.com","category":"Design"},{"id":"canva","name":"Canva","domain":"canva.com","category":"Design"},{"id":"miro","name":"Miro","domain":"miro.com","category":"Design"},{"id":"gitlab","name":"GitLab","domain":"gitlab.com","category":"Developer tools"},{"id":"bitbucket","name":"Bitbucket","domain":"bitbucket.org","category":"Developer tools"},{"id":"vercel","name":"Vercel","domain":"vercel.com","category":"Developer tools"},{"id":"sentry","name":"Sentry","domain":"sentry.io","category":"Developer tools"},{"id":"datadog","name":"Datadog","domain":"datadoghq.com","category":"Developer tools"},{"id":"pagerduty","name":"PagerDuty","domain":"pagerduty.com","category":"Developer tools"},{"id":"stripe","name":"Stripe","domain":"stripe.com","category":"Payments"},{"id":"paypal","name":"PayPal","domain":"paypal.com","category":"Payments"},{"id":"square","name":"Square","domain":"squareup.com","category":"Payments"},{"id":"shopify","name":"Shopify","domain":"shopify.com","category":"Commerce"},{"id":"quickbooks","name":"QuickBooks","domain":"quickbooks.intuit.com","category":"Accounting"},{"id":"xero","name":"Xero","domain":"xero.com","category":"Accounting"},{"id":"freshbooks","name":"FreshBooks","domain":"freshbooks.com","category":"Accounting"},{"id":"brex","name":"Brex","domain":"brex.com","category":"Finance"},{"id":"ramp","name":"Ramp","domain":"ramp.com","category":"Finance"},{"id":"docusign","name":"DocuSign","domain":"docusign.com","category":"Documents"},{"id":"dropbox-sign","name":"Dropbox Sign","domain":"sign.dropbox.com","category":"Documents"},{"id":"pandadoc","name":"PandaDoc","domain":"pandadoc.com","category":"Documents"},{"id":"mailchimp","name":"Mailchimp","domain":"mailchimp.com","category":"Marketing"},{"id":"klaviyo","name":"Klaviyo","domain":"klaviyo.com","category":"Marketing"},{"id":"constant-contact","name":"Constant Contact","domain":"constantcontact.com","category":"Marketing"},{"id":"typeform","name":"Typeform","domain":"typeform.com","category":"Forms"},{"id":"surveymonkey","name":"SurveyMonkey","domain":"surveymonkey.com","category":"Forms"},{"id":"webflow","name":"Webflow","domain":"webflow.com","category":"Websites"},{"id":"wordpress-com","name":"WordPress.com","domain":"wordpress.com","category":"Websites"},{"id":"wix","name":"Wix","domain":"wix.com","category":"Websites"},{"id":"facebook-pages","name":"Facebook Pages","domain":"facebook.com","category":"Social"},{"id":"instagram","name":"Instagram","domain":"instagram.com","category":"Social"},{"id":"threads","name":"Threads","domain":"threads.net","category":"Social"},{"id":"tiktok","name":"TikTok","domain":"tiktok.com","category":"Social"},{"id":"pinterest","name":"Pinterest","domain":"pinterest.com","category":"Social"},{"id":"reddit","name":"Reddit","domain":"reddit.com","category":"Social"},{"id":"spotify","name":"Spotify","domain":"spotify.com","category":"Media"},{"id":"strava","name":"Strava","domain":"strava.com","category":"Health"},{"id":"fitbit","name":"Fitbit","domain":"fitbit.com","category":"Health"},{"id":"oura","name":"Oura","domain":"ouraring.com","category":"Health"},{"id":"todoist","name":"Todoist","domain":"todoist.com","category":"Productivity"},{"id":"evernote","name":"Evernote","domain":"evernote.com","category":"Productivity"},{"id":"dropbox-paper","name":"Dropbox Paper","domain":"paper.dropbox.com","category":"Productivity"},{"id":"coda","name":"Coda","domain":"coda.io","category":"Productivity"},{"id":"smartsheet","name":"Smartsheet","domain":"smartsheet.com","category":"Project management"},{"id":"wrike","name":"Wrike","domain":"wrike.com","category":"Project management"},{"id":"basecamp","name":"Basecamp","domain":"basecamp.com","category":"Project management"},{"id":"gong","name":"Gong","domain":"gong.io","category":"Sales"},{"id":"outreach","name":"Outreach","domain":"outreach.io","category":"Sales"},{"id":"salesloft","name":"Salesloft","domain":"salesloft.com","category":"Sales"},{"id":"apollo","name":"Apollo","domain":"apollo.io","category":"Sales"},{"id":"gusto","name":"Gusto","domain":"gusto.com","category":"HR"},{"id":"bamboohr","name":"BambooHR","domain":"bamboohr.com","category":"HR"},{"id":"deel","name":"Deel","domain":"deel.com","category":"HR"},{"id":"workday","name":"Workday","domain":"workday.com","category":"HR"},{"id":"okta","name":"Okta","domain":"okta.com","category":"Identity"},{"id":"twitch","name":"Twitch","domain":"twitch.tv","category":"Media"},{"id":"vimeo","name":"Vimeo","domain":"vimeo.com","category":"Media"},{"id":"eventbrite","name":"Eventbrite","domain":"eventbrite.com","category":"Events"},{"id":"amazon-seller-central","name":"Amazon Seller Central","domain":"sellercentral.amazon.com","category":"Commerce"}];
+const SERVER_API = (document.querySelector('meta[name="approval-path-api"]')||{}).content || "";
+
+/* ---------- helpers ---------- */
+const $ = (s, r=document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const slug = s => String(s).toLowerCase().replace(/^https?:\/\//,'').replace(/^www\./,'').replace(/\.(com|io|so|app|dev|co|net|org|ai)(\/.*)?$/,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,60) || 'app';
+const MAX = 129600; // 90 days in minutes
+const pos = m => m <= 1 ? 0 : Math.min(100, Math.log(m)/Math.log(MAX)*100);
+const TICKS = [[1,'1 min'],[60,'1 hr'],[1440,'1 day'],[10080,'1 wk'],[43200,'1 mo'],[129600,'3 mo']];
+const UNITS = [[43200,'mo'],[20160,'wk'],[1440,'days'],[60,'hr'],[1,'min']]; // weeks from 2 wk, so 10 days reads as days
+function unitFor(m){ for (const [u,l] of UNITS) if (m >= u) return [u,l]; return [1,'min']; }
+function fmt(m){ if (!m) return '0 min'; const [u,l]=unitFor(m); const v=m/u; return `${v<10&&v%1? v.toFixed(1).replace(/\.0$/,''):Math.round(v)} ${l==='days'&&Math.round(v)===1?'day':l}`; }
+function fmtRange(a,b){
+  if (!b) return 'none';
+  const [ua,la]=unitFor(a||1),[ub,lb]=unitFor(b);
+  if (la===lb){ const r=v=>{const x=v/ub; return x<10&&x%1? x.toFixed(1).replace(/\.0$/,''):Math.round(x);}; return `${r(a)}–${r(b)} ${lb}`; }
+  return `${a?fmt(a):'0'}–${fmt(b)}`;
+}
+const TIER = {
+  "self-serve":["Self-serve","easy"], "customer-approval":["Each customer approves","mid"], "restricted":["Works, with limits","mid"],
+  "paid":["Paid access","mid"], "review-required":["Review required","hard"], "gated":["Heavy review","hard"], "no-oauth":["No OAuth","mid"], "unknown":["Unclear","mid"]
+};
+const tierOf = t => TIER[t] || TIER.unknown;
+const EV = { tested:"Tested by agent", docs:"Official docs", report:"Third-party report", model:"Unverified" };
+const WHO = { you:"You", agent:"Agent can do", both:"Agent drafts, you confirm" };
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>t.hidden=true,2600); }
+
+/* ---------- runtime capabilities (light up when available) ---------- */
+const caps = { sample:null, db:null, downloads:null };
+if (window.claude && typeof window.claude.use === 'function'){
+  window.claude.use('sample').then(s => { caps.sample = s; if (state.view==='home') renderHome(); }).catch(()=>{});
+  window.claude.use('db').then(d => { caps.db = d; if (state.pendingHash) route(); }).catch(()=>{});
+  window.claude.use('downloads').then(d => { caps.downloads = d; }).catch(()=>{});
+}
+const generated = {}; // id -> guide (this session)
+const state = { view:'home', filter:'ready', pendingHash:null, busy:false };
+
+/* ---------- time ruler ---------- */
+function axisHTML(labelCol=true){
+  return `<div class="axis" aria-hidden="true">${labelCol?'<div></div>':''}<div class="ticks">${TICKS.map(([m,l])=>`<span style="left:${pos(m)}%">${l}</span>`).join('')}</div></div>`;
+}
+function trackHTML(p){
+  const h0=p.hands[0], h1=p.hands[1], w0=(p.wait||[0,0])[0], w1=(p.wait||[0,0])[1];
+  let s = `<div class="track" role="img" aria-label="${esc(`${fmtRange(h0,h1)} of work, wait ${fmtRange(w0,w1)}`)}">`;
+  s += `<div class="bar work" style="left:${pos(h0)}%;width:${Math.max(1.2,pos(h1)-pos(h0))}%"></div>`;
+  if (w1>0){ const a=pos(h0+w0), b=pos(h1+w1); s += `<div class="bar wait ${p.waitUnknown?'unknown':''}" style="left:${Math.max(a,pos(h1))}%;width:${Math.max(1.2,b-Math.max(a,pos(h1)))}%"></div>`; }
+  return s + `</div>`;
+}
+
+/* ---------- routing ---------- */
+function findGuide(id){ return LIBRARY.find(g=>g.id===id) || generated[id] || null; }
+async function route(){
+  const h = (location.hash||'').slice(1);
+  if (h.startsWith('g-')){
+    const id = h.slice(2);
+    let g = findGuide(id);
+    if (!g && caps.db){
+      try { const snap = await caps.db.doc('guides/'+id).get(); if (snap.exists){ g = JSON.parse(snap.data().json); generated[id]=g; } } catch(e){}
+    }
+    if (g){ state.pendingHash=null; return renderGuide(g); }
+    state.pendingHash = h;
+    $('#app').innerHTML = `<p>Looking for this guide…</p><p class="muted">If it does not appear, it was generated in another session and has not been saved for you. <button class="back" onclick="goHome()">Go to all guides</button></p>`;
+    return;
+  }
+  renderHome();
+}
+function goHome(){ if (location.hash){ location.hash=''; } else renderHome(); window.scrollTo(0,0); }
+window.goHome = goHome;
+window.addEventListener('hashchange', route);
+$('#homeLink').addEventListener('click', e => { e.preventDefault(); goHome(); });
+
+/* ---------- home ---------- */
+function libRow(c){
+  const g = findGuide(c.id);
+  let right;
+  if (g){
+    right = `<div class="stack">${g.paths.map(trackHTML).join('')}</div>`;
+  } else {
+    right = `<span class="pending">Not researched yet. Generate a guide now.</span>`;
+  }
+  let tiers = '';
+  if (g){ const ts=[...new Set(g.paths.map(p=>tierOf(p.tier)))]; const a=ts[0], b=ts[ts.length-1]; tiers = `<div class="ct"><span class="tier ${a[1]}">${a[0]}</span>${ts.length>1?` to <span class="tier ${b[1]}">${b[0]}</span>`:''}</div>`; }
+  return `<li><button class="row" data-id="${esc(c.id)}" data-name="${esc(c.name)}"><div><div class="nm">${esc(c.name)}</div>${tiers||`<div class="ct">${esc(c.category)}</div>`}</div>${right}</button></li>`;
+}
+function renderHome(){
+  state.view='home';
+  const canGen = !!caps.sample || !!SERVER_API;
+  const genIds = Object.keys(generated).filter(id=>!LIBRARY.find(g=>g.id===id));
+  let list = state.filter==='ready'
+    ? [...LIBRARY.map(g=>({id:g.id,name:g.name,category:g.category})), ...genIds.map(id=>({id, name:generated[id].name, category:generated[id].category}))]
+    : CATALOG.map(c => ({...c}));
+  $('#app').innerHTML = `
+  <div class="ask">
+    <h1>See what it takes to get your OAuth app approved.</h1>
+    <p class="lede">Before your users can connect an app, you usually need your own OAuth app with that provider, and some providers make you wait weeks for review. Look up an app to see the work, the wait and what can block you.</p>
+    <form class="askform" id="askform">
+      <label for="q" class="muted" style="position:absolute;left:-9999px">App name or website</label>
+      <input id="q" name="q" placeholder="App name or website, like Notion or hubspot.com" autocomplete="off" required>
+      <button class="btn" type="submit" ${state.busy?'disabled':''}>Write guide</button>
+    </form>
+    <p class="hint">${canGen ? 'Apps in the library open instantly. Anything else is researched by an agent while you watch, in about a minute.' : 'Live generation runs when this page is opened in Claude, or with the server in the source repository. The library below works everywhere.'}</p>
+  </div>
+  <div class="legend"><span><i class="sw work"></i>Your hands-on work</span><span><i class="sw wait"></i>Waiting on the provider or customer (faded where no one publishes a number)</span></div>
+  <div class="libhead">
+    <h2>${state.filter==='ready' ? 'Researched guides' : 'All 100 apps'}</h2>
+    <div class="tabs" role="group" aria-label="Library filter">
+      <button data-f="ready" aria-pressed="${state.filter==='ready'}">Researched (${LIBRARY.length+genIds.length})</button>
+      <button data-f="all" aria-pressed="${state.filter==='all'}">All 100</button>
+    </div>
+  </div>
+  ${axisHTML()}
+  <ul class="lib">${list.map(libRow).join('')}</ul>
+  <p class="foot">Each researched guide was checked on the date shown, against provider docs, integration vendors' runbooks and the agent's own attempts at the setup pages. Every claim carries a label saying which. Time on the ruler is a log scale.</p>`;
+  $('#askform').addEventListener('submit', e => { e.preventDefault(); const v=$('#q').value.trim(); if (v) openOrGenerate(v); });
+  document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => { state.filter=b.dataset.f; renderHome(); });
+  document.querySelectorAll('.row').forEach(b => b.onclick = () => openOrGenerate(b.dataset.name, b.dataset.id));
+}
+function openOrGenerate(q, id){
+  const key = id || slug(q);
+  const byName = LIBRARY.find(g => g.id===key || g.name.toLowerCase()===q.toLowerCase() || slug(g.domain)===key || g.domain===q.toLowerCase().replace(/^https?:\/\/(www\.)?/,'').replace(/\/.*$/,''))
+              || Object.values(generated).find(g=>g.id===key);
+  if (byName){ location.hash = 'g-'+byName.id; return; }
+  generate(q, key);
+}
+
+/* ---------- guide page ---------- */
+function srcLinks(g, ids){
+  if (!ids || !ids.length) return '';
+  return ids.map(id => { const s=(g.sources||[]).find(x=>x.id===id); return s ? `<a class="src" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(shortTitle(s.title))}</a>` : ''; }).filter(Boolean).join(', ');
+}
+function shortTitle(t){ return String(t).split(':')[0]; }
+function tagsHTML(g, it, withWho){
+  return `<div class="tags">${withWho&&it.who?`<span class="who">${WHO[it.who]||esc(it.who)}</span>`:''}<span class="ev ${esc(it.ev||'model')}">${EV[it.ev]||'Unverified'}</span>${srcLinks(g,it.src)}</div>`;
+}
+function countEv(g){
+  const all=[...(g.prereqs||[]),...(g.steps||[]),...(g.nuances||[])];
+  const c={tested:0,docs:0,report:0,model:0}; all.forEach(i=>c[i.ev in c?i.ev:'model']++); return c;
+}
+function renderGuide(g){
+  state.view='guide';
+  const ev = countEv(g);
+  const isGen = g.mode !== 'verified';
+  $('#app').innerHTML = `
+  <button class="back" onclick="goHome()">All guides</button>
+  <div class="gtop">
+    <div><h1>${esc(g.name)}</h1>
+      <div class="gmeta">${esc(g.category||'')}${g.category?', ':''}${isGen?'generated':'checked'} ${esc(g.checked||'')}${g.startUrl?`. Start at <a href="${esc(g.startUrl)}" target="_blank" rel="noopener">${esc(g.startUrl.replace(/^https?:\/\//,''))}</a>`:''}</div></div>
+    <div class="actions">
+      <button class="btn small ghost" id="copyLink">Copy link</button>
+      <button class="btn small ghost" id="copyMd">Copy as Markdown</button>
+      <button class="btn small ghost" id="dlMd">Download .md</button>
+    </div>
+  </div>
+  ${isGen ? `<div class="banner"><b>Generated live, not yet verified.</b> ${g.genNote?esc(g.genNote):'The agent wrote this from what it already knows about the provider and could not browse in this view, so every claim is labeled Unverified. Check the linked starting points before you commit to a timeline.'}</div>` : ''}
+  <p class="verdict">${esc(g.headline)}</p>
+
+  <div class="paths">
+    <h2>Your path depends on what you need access to</h2>
+    ${axisHTML()}
+    ${g.paths.map(p => { const [tl,tc]=tierOf(p.tier); const w=(p.wait||[0,0]);
+      return `<div class="prow"><div><div class="pn">${esc(p.name)}</div><div class="pt tier ${tc}">${tl}</div></div>
+      <div>${trackHTML(p)}<div class="sum">${fmtRange(p.hands[0],p.hands[1])} of your work. ${w[1]?`Then wait ${fmtRange(w[0],w[1])}${p.waitUnknown?' (estimate, no published figure)':''}.`:'No approval wait.'} ${esc(p.note||'')}</div></div></div>`; }).join('')}
+  </div>
+
+  <div class="cols">
+    <div>
+      ${g.prereqs?.length ? `<section><h2>Before you start</h2><ul class="items">${g.prereqs.map(i=>`<li><div>${esc(i.t)}</div>${tagsHTML(g,i)}</li>`).join('')}</ul></section>`:''}
+      <section><h2>Steps</h2><ol class="steps">${(g.steps||[]).map(s=>`<li><div><div class="it">${esc(s.t)}</div><div class="id">${esc(s.d)}</div>${tagsHTML(g,s,true)}</div></li>`).join('')}</ol>
+      ${g.snippet ? `<p class="it" style="margin-top:18px">${esc(g.snippet.label)}</p><pre><code>${esc(g.snippet.code)}</code></pre>`:''}</section>
+      ${g.nuances?.length ? `<section><h2>What can catch you out</h2><ul class="items">${g.nuances.map(n=>`<li class="impact-${esc(n.impact||'low')}"><div class="it">${esc(n.t)}</div><div class="id">${esc(n.d)}</div>${tagsHTML(g,n)}</li>`).join('')}</ul></section>`:''}
+      ${g.blockers?.length ? `<section><h2>If you get stuck</h2><dl class="ifthen">${g.blockers.map(b=>`<dt>${esc(b.if)}</dt><dd>${esc(b.then)}</dd>`).join('')}</dl></section>`:''}
+    </div>
+    <aside>
+      <div class="card split"><h3>Who does what</h3>
+        <h4>An agent can</h4><ul>${(g.agent?.can||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+        <h4>You need to</h4><ul>${(g.agent?.you||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
+      <div class="card"><h3>How sure is this?</h3>
+        <div class="evsum"><b>${ev.tested}</b><span class="ev tested">Tested by agent</span><b>${ev.docs}</b><span class="ev docs">Official docs</span><b>${ev.report}</b><span class="ev report">Third-party report</span><b>${ev.model}</b><span class="ev model">Unverified</span></div>
+        ${g.tested?.length?`<h4 style="margin:14px 0 4px;font-size:14px">What the agent tried</h4><ul>${g.tested.map(t=>`<li>${esc(t.what)}. ${esc(t.result)}</li>`).join('')}</ul>`:''}
+      </div>
+      ${g.uncertain?.length?`<div class="card"><h3>Still uncertain</h3><ul>${g.uncertain.map(u=>`<li>${esc(u)}</li>`).join('')}</ul></div>`:''}
+      ${g.review?.length?`<div class="card"><h3>Reviewer agent flagged</h3><ul>${g.review.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>`:''}
+      ${g.sources?.length?`<div class="card"><h3>${isGen?'Where to verify':'Sources'}</h3><ul class="srclist">${g.sources.map(s=>`<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a><span class="kind">${({official:'Provider',['third-party']:'Third party',probe:'Agent attempt',suggested:'Suggested starting point'})[s.kind]||esc(s.kind)}</span></li>`).join('')}</ul></div>`:''}
+    </aside>
+  </div>`;
+  $('#copyLink').onclick = () => copyText(shareLink(g), 'Link copied');
+  $('#copyMd').onclick = () => copyText(toMarkdown(g), 'Markdown copied');
+  $('#dlMd').onclick = () => downloadMd(g);
+  window.scrollTo(0,0);
+}
+function shareLink(g){ return (location.href.split('#')[0]) + '#g-' + g.id; }
+async function copyText(t, ok){
+  try { await navigator.clipboard.writeText(t); toast(ok); }
+  catch(e){ const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); toast(ok);}catch(_){ toast('Copy is blocked here. Use Download instead.'); } ta.remove(); }
+}
+async function downloadMd(g){
+  const md = toMarkdown(g);
+  if (caps.downloads){ try { await caps.downloads.save({ filename:`${g.id}-oauth-guide.md`, data: md }); return; } catch(e){ if (e && e.code==='declined') return; } }
+  try { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([md],{type:'text/markdown'})); a.download=`${g.id}-oauth-guide.md`; a.click(); }
+  catch(e){ toast('Download is not available here. Use Copy as Markdown.'); }
+}
+function toMarkdown(g){
+  const L=[]; const ev=i=>` _(${EV[i.ev]||'Unverified'}${i.src?.length?': '+i.src.map(id=>(g.sources||[]).find(s=>s.id===id)).filter(Boolean).map(s=>`[${shortTitle(s.title)}](${s.url})`).join(', '):''})_`;
+  L.push(`# ${g.name}: OAuth app setup guide`, '', `${g.mode==='verified'?'Checked':'Generated (unverified)'} ${g.checked||''}. Start at ${g.startUrl||'the provider developer portal'}.`, '', `**${g.headline}**`, '', '## Paths');
+  g.paths.forEach(p=>L.push(`- **${p.name}**: ${tierOf(p.tier)[0]}. ${fmtRange(p.hands[0],p.hands[1])} of work; wait ${p.wait&&p.wait[1]?fmtRange(p.wait[0],p.wait[1])+(p.waitUnknown?' (estimate)':''):'none'}. ${p.note||''}`));
+  if (g.prereqs?.length){ L.push('','## Before you start'); g.prereqs.forEach(i=>L.push(`- ${i.t}${ev(i)}`)); }
+  L.push('','## Steps'); (g.steps||[]).forEach((s,n)=>L.push(`${n+1}. **${s.t}** (${WHO[s.who]||s.who}). ${s.d}${ev(s)}`));
+  if (g.snippet) L.push('', `${g.snippet.label}:`, '```'+(g.snippet.lang||''), g.snippet.code, '```');
+  if (g.nuances?.length){ L.push('','## What can catch you out'); g.nuances.forEach(n=>L.push(`- **${n.t}.** ${n.d}${ev(n)}`)); }
+  if (g.blockers?.length){ L.push('','## If you get stuck'); g.blockers.forEach(b=>L.push(`- **${b.if}:** ${b.then}`)); }
+  L.push('','## Who does what','**An agent can:** '+(g.agent?.can||[]).join('; ')+'.','','**You need to:** '+(g.agent?.you||[]).join('; ')+'.');
+  if (g.tested?.length){ L.push('','## What the agent tried'); g.tested.forEach(t=>L.push(`- ${t.what}. ${t.result}`)); }
+  if (g.uncertain?.length){ L.push('','## Still uncertain'); g.uncertain.forEach(u=>L.push(`- ${u}`)); }
+  if (g.review?.length){ L.push('','## Reviewer agent flagged'); g.review.forEach(u=>L.push(`- ${u}`)); }
+  if (g.sources?.length){ L.push('','## Sources'); g.sources.forEach(s=>L.push(`- [${s.title}](${s.url})`)); }
+  return L.join('\n');
+}
+
+/* ---------- live generation ---------- */
+const STAGES = [
+  ['identify','Identify the app','Confirm which product you mean and whether it uses OAuth.'],
+  ['draft','Research the setup path','Work out paths, steps, requirements and waits.'],
+  ['review','Skeptical review','A second agent looks for outdated or overconfident claims.'],
+  ['save','Make it shareable','Save the guide so the link works for others.']
+];
+function renderGen(q){
+  $('#app').innerHTML = `<button class="back" onclick="goHome()">All guides</button>
+  <div class="gen"><h2>Writing a guide for ${esc(q)}</h2>
+  <p class="muted" style="margin:6px 0 0">This usually takes one to two minutes.</p>
+  <ul class="stages">${STAGES.map(([k,n,d])=>`<li id="st-${k}"><span class="dot"></span><div><div class="sn">${n}</div><div class="sd">${d}</div></div></li>`).join('')}</ul>
+  <div id="genErr"></div>
+  <div style="margin-top:14px"><button class="btn small ghost" id="stopGen">Stop</button></div></div>`;
+}
+function stage(k, status, note){
+  const li = $('#st-'+k); if (!li) return;
+  li.querySelector('.dot').className = 'dot ' + (status||'');
+  if (note) li.querySelector('.sd').textContent = note;
+}
+function genError(msg){ state.busy=false; const e=$('#genErr'); if (e) e.innerHTML = `<p class="err">${esc(msg)}</p><button class="btn small" onclick="goHome()">Back to guides</button>`; }
+
+const EXAMPLE = (() => { const g = JSON.parse(JSON.stringify(LIBRARY.find(x=>x.id==='github')||{})); delete g.tested; return g; })();
+const SCHEMA_NOTE = `Return ONLY a JSON object with this shape (no prose, no code fences):
+{"name":string,"domain":string,"category":string,"startUrl":string,
+ "headline":string (2 sentences: what is easy, what is hard),
+ "paths":[{"name":string,"tier":"self-serve"|"customer-approval"|"restricted"|"paid"|"review-required"|"gated"|"no-oauth","hands":[minMinutes,maxMinutes],"wait":[minMinutes,maxMinutes],"waitUnknown":boolean,"note":string}],
+ "prereqs":[{"t":string,"ev":"model","src":[]}],
+ "steps":[{"t":string,"d":string,"who":"you"|"agent"|"both","ev":"model","src":[]}],
+ "nuances":[{"t":string,"d":string,"impact":"high"|"medium"|"low","ev":"model","src":[]}],
+ "blockers":[{"if":string,"then":string}],
+ "agent":{"can":[string],"you":[string]},
+ "uncertain":[string],
+ "sources":[{"id":string,"title":string,"url":string,"kind":"suggested"}]}`;
+
+async function generate(q, key){
+  if (state.busy) return;
+  if (SERVER_API) return generateViaServer(q, key);
+  if (!caps.sample){ toast('Live generation needs Claude. Open this page in Claude, or run the server from the repo.'); return; }
+  state.busy = true; renderGen(q);
+  const ctl = new AbortController(); $('#stopGen').onclick = () => { ctl.abort(); };
+  const today = new Date().toISOString().slice(0,10);
+  try {
+    // 1. Identify
+    stage('identify','run');
+    const id = await caps.sample.json(
+`A developer building an AI agent typed "${q}" because their users need to connect this app. Identify the product.
+Return ONLY JSON: {"recognized":boolean,"name":string,"domain":string,"category":string,"oauth":"yes"|"no"|"unclear","developerPortal":string,"confidence":"high"|"medium"|"low","why":string (one sentence)}.
+If you do not know this product, set recognized false and do not guess details.`, { modelTier:'quick', signal:ctl.signal });
+    if (!id || id.recognized === false){
+      stage('identify','fail', `Couldn't confidently identify "${q}". ${id&&id.why?id.why:''}`);
+      return genError('Try the product\u2019s website address instead, for example example.com.');
+    }
+    stage('identify','done', `${id.name} (${id.domain}). OAuth: ${id.oauth}. Confidence: ${id.confidence}. ${id.why||''}`);
+
+    // 2. Draft
+    stage('draft','run','Drafting paths, steps and requirements…');
+    let chars = 0;
+    const draft = await caps.sample.json(
+`You write OAuth app setup guides for developers building AI agents whose end users connect third-party apps (via an integration platform such as Composio, which supplies the redirect URL).
+Write the guide for: ${id.name} (${id.domain}). Developer portal hint: ${id.developerPortal||'unknown'}. OAuth support: ${id.oauth}.
+
+Rules:
+- The developer needs to know: how hard it is, hands-on time vs approval wait, requirements and nuances that block approval, what an agent can do vs what they must do themselves.
+- Split into "paths" when difficulty depends on what access is needed (e.g. basic scopes vs scopes that trigger review, internal vs public distribution, marketplace listing). Order paths from easiest to hardest. Times are in minutes.
+- You cannot browse. Mark every claim "ev":"model". Do not invent precise figures (prices, review days) unless you are confident; if unsure, give a wide range, set waitUnknown true, and add the doubt to "uncertain".
+- Mention policy or pricing changes you know of and the date you believe they took effect, and flag in "uncertain" that they may have changed since.
+- If the product does not offer OAuth for third parties, use one path with tier "no-oauth" and explain the alternative (API keys, partner program).
+- "sources" are official pages where the developer should verify (developer portal, OAuth docs, app review policy). Only include URLs you are confident exist; prefer root documentation URLs.
+- Plain language, short sentences, 4-7 steps, 3-5 nuances.
+
+Here is an example of a finished guide for a different app, for format and tone only (its evidence labels came from real sources; yours must all be "model"):
+${JSON.stringify(EXAMPLE)}
+
+${SCHEMA_NOTE}`, { modelTier:'default', signal:ctl.signal, onText:({text}) => { chars = text.length; stage('draft','run',`Drafting… ${chars.toLocaleString()} characters written`); } });
+    validateGuide(draft);
+    stage('draft','done', `${draft.paths.length} path${draft.paths.length>1?'s':''}, ${draft.steps.length} steps, ${draft.nuances?.length||0} things to watch.`);
+
+    // 3. Review
+    stage('review','run');
+    let review = [];
+    try {
+      const r = await caps.sample.json(
+`You are a skeptical reviewer of a developer guide about setting up an OAuth app for ${id.name}. Today is ${today}. The guide was written without browsing.
+Find claims that are likely outdated, overconfident, or wrong (pricing, review timelines, scope tiers, deprecated products, renamed consoles). Do not rewrite the guide.
+Return ONLY JSON: {"flags":[string]} with at most 5 short, specific flags, each saying what to verify and why. Return {"flags":[]} if nothing stands out.
+
+Guide:
+${JSON.stringify({headline:draft.headline,paths:draft.paths,steps:draft.steps,nuances:draft.nuances})}`, { modelTier:'quick', signal:ctl.signal });
+      review = Array.isArray(r?.flags) ? r.flags.slice(0,5).map(String) : [];
+      stage('review','done', review.length ? `${review.length} claim${review.length>1?'s':''} flagged for checking.` : 'Nothing flagged.');
+    } catch(e){ if (e && e.code==='cancelled') throw e; stage('review','fail','Review step failed; the guide is shown without it.'); }
+
+    // 4. Assemble + save
+    const g = {
+      id: key, mode:'generated', checked: today, ...draft,
+      name: draft.name || id.name, domain: draft.domain || id.domain,
+      review, tested: [{ what:'Live research in this view', result:'The agent could not open provider pages here, so nothing was tested. Run the repository server for web research and page probes.', date: today }],
+    };
+    g.sources = (g.sources||[]).map((s,i)=>({ id: s.id||('s'+i), title: s.title||s.url, url: s.url, kind:'suggested' })).filter(s=>/^https?:\/\//.test(s.url||''));
+    generated[key] = g;
+    stage('save','run');
+    if (caps.db){
+      try { await caps.db.doc('guides/'+key).set({ json: JSON.stringify(g), name: g.name, createdAt: Date.now() }); stage('save','done','Saved. The link works for anyone who can open this page.'); }
+      catch(e){ stage('save','fail','Could not save for others (you may have view-only access). The link works in this session; use Download .md to share.'); }
+    } else stage('save','fail','Saving is not available in this view. Use Download .md to share.');
+    state.busy = false;
+    setTimeout(()=>{ location.hash = 'g-' + key; if ((location.hash||'')==='#g-'+key) renderGuide(g); }, 700);
+  } catch(e){
+    const code = e && e.code;
+    const msg = code==='cancelled' ? 'Stopped.' : code==='not_granted' ? 'Generation needs your permission to use Claude. Reload and allow it to try again.'
+      : code==='rate_limited' ? 'Too many requests right now. Wait a minute and try again.' : code==='invalid_json' ? 'The agent returned a guide in the wrong format. Try again.'
+      : (e && e.message) ? e.message : 'Something went wrong while writing the guide.';
+    STAGES.forEach(([k])=>{ const d=$('#st-'+k+' .dot'); if (d && d.classList.contains('run')) stage(k,'fail'); });
+    genError(msg);
+  }
+}
+function validateGuide(d){
+  if (!d || typeof d!=='object') throw { message:'The agent returned an empty guide. Try again.' };
+  if (!Array.isArray(d.paths) || !d.paths.length) throw { message:'The guide had no setup paths. Try again.' };
+  d.paths = d.paths.map(p=>({ ...p, hands: arr2(p.hands,[15,60]), wait: arr2(p.wait,[0,0]) }));
+  d.steps = Array.isArray(d.steps)? d.steps : [];
+  ['prereqs','steps','nuances'].forEach(k => (d[k]||[]).forEach(i => { i.ev = 'model'; i.src = []; }));
+  d.headline = d.headline || '';
+}
+function arr2(a, def){ if (!Array.isArray(a)||a.length<2) return def; const x=Math.max(0,+a[0]||0), y=Math.max(x,+a[1]||0); return [x,y]; }
+
+async function generateViaServer(q, key){
+  state.busy = true; renderGen(q);
+  const ctl = new AbortController(); $('#stopGen').onclick = () => ctl.abort();
+  try {
+    const res = await fetch(SERVER_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ query:q, id:key }), signal: ctl.signal });
+    if (!res.ok || !res.body) throw { message: `Server error ${res.status}` };
+    const reader = res.body.getReader(); const dec = new TextDecoder(); let buf='';
+    for(;;){
+      const {value, done} = await reader.read(); if (done) break;
+      buf += dec.decode(value, {stream:true});
+      let i; while ((i = buf.indexOf('\n\n')) >= 0){
+        const chunk = buf.slice(0,i); buf = buf.slice(i+2);
+        const line = chunk.split('\n').find(l=>l.startsWith('data: ')); if (!line) continue;
+        const ev = JSON.parse(line.slice(6));
+        if (ev.type==='stage') stage(ev.stage, ev.status, ev.note);
+        if (ev.type==='error') throw { message: ev.message };
+        if (ev.type==='guide'){ generated[ev.guide.id]=ev.guide; state.busy=false; location.hash='g-'+ev.guide.id; }
+      }
+    }
+  } catch(e){ genError(e && e.name==='AbortError' ? 'Stopped.' : (e.message||'Server request failed.')); }
+}
+
+route();
+</script>
+</body>
+</html>
