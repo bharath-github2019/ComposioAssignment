@@ -1,0 +1,14 @@
+{
+  "name": "approval-path",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "OAuth app setup and approval guides for developers building AI agents",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "build": "node build.mjs && node build.mjs --server",
+    "start": "node build.mjs --server && node server/server.mjs",
+    "batch": "node server/batch.mjs",
+    "test": "node test/guides.test.mjs && node test/audit.test.mjs"
+  }
+}
