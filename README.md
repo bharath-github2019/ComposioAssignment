@@ -28,7 +28,7 @@ Guides that show a developer what it takes to get their own OAuth app working wi
 
 The published demo runs inside Claude and can't browse, so its generated guides are labeled Unverified. The server in this repo does real web research.
 
-## Verification (checked 2026-10-28)
+## Verification
 
 - **Tested:** GitHub's registration page redirects an unauthenticated agent to sign-in. Other providers weren't reachable from the sandbox, and their guides say so.
 - **Corrected:** Slack's 1 req/min limit now applies to existing unlisted installs, not just new apps (since March 3, 2026). Salesforce no longer allows new Connected Apps by default. X has no free tier for new developers.
