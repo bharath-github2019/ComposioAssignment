@@ -54,3 +54,5 @@ Without a key, open `dist/index.html` directly or use the live demo. If you need
 - The full server research loop wasn't run end to end during the build (no API key available there).
 - Guides go stale; each shows its check date.
 - Hands-on time estimates are judgment calls, not measurements.
+
+Disclaimer: I have used claude code to make this webapp. PMs have to use AI to move faster and better.
